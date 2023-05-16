@@ -1,0 +1,52 @@
+.user-post {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    cursor: pointer;
+
+    &__lots-photos-icon {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        right: 5px;
+        top: 5px;
+    }
+
+    &__image {
+        width: 300px;
+        height: 400px;
+    }
+
+    &:hover .user-post--hovered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &--hovered {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        bottom: 0;
+        display: none;
+        background: rgba(0, 0, 0, 0.5);
+
+        &__info {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: white;
+
+            &:first-of-type {
+                margin-right: 10px;
+            }
+
+            &__image {
+                margin-right: 3px;
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+}

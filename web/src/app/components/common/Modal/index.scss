@@ -1,0 +1,45 @@
+@import "@/index.scss";
+
+.modal {
+    z-index: 1000;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.537);
+    filter: blur(0);
+
+    &__close {
+        border: none;
+        outline: none;
+        background: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: flex-end;
+
+        &__image {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    &__content {
+        width: 400px;
+        height: 550px;
+        background: white;
+        padding: 7px;
+
+        &__line {
+            right: 0;
+            top: 0;
+            width: 100%;
+            content: "";
+            background: $line-color;
+            height: 1.5px;
+        }
+    }
+}

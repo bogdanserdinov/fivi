@@ -1,0 +1,63 @@
+.post-slider {
+    width: 400px;
+    margin: 10px auto 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    &__container {
+        width: 850px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+    }
+
+    &__item {
+        width: 400px;
+        height: 500px;
+        opacity: 0;
+
+        &.active {
+            opacity: 1;
+            transition-duration: 1s;
+            transform: scale(1);
+        }
+
+        &__image {
+            width: 400px;
+            height: 500px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    }
+
+    &__arrow {
+        z-index: 2;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.8;
+        cursor: pointer;
+
+        &__next,
+        &__prev {
+            width: 24px;
+            height: 24px;
+
+            &__image {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        &__next {
+            right: 10px;
+        }
+
+        &__prev {
+            left: 10px;
+            transform: translateY(-50%) rotate(180deg);
+        }
+    }
+}

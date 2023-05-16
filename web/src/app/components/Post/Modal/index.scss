@@ -1,0 +1,165 @@
+@import "@/index.scss";
+
+.post-modal {
+    z-index: 1000;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    background: rgba(0, 0, 0, 0.537);
+    filter: blur(0);
+
+    &__buttons {
+        display: flex;
+    }
+
+    &__photo {
+        width: 400px;
+        height: 500px;
+    }
+
+    &__content {
+        width: 900px;
+        height: 600px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        transition: 1.1s ease-out;
+        background: white;
+    }
+
+    &__top-side {
+        padding: 20px 10px 10px;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+
+        &:after {
+            position: absolute;
+            height: 1.5px;
+            width: 100%;
+            right: 0;
+            bottom: 0;
+            content: "";
+            background: $line-color;
+        }
+    }
+
+    &__likes {
+        margin: 10px 0;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    &__user-info {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #000;
+
+        &__photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        &__nickname {
+            margin-left: 10px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+    }
+
+    &__photos {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:after {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            content: "";
+            background: $line-color;
+            width: 1.5px;
+        }
+    }
+
+    &__comments {
+        height: calc(600px - 80px - 110px);
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    &__actions {
+        position: relative;
+    }
+
+    &__bottom-side {
+        position: relative;
+        padding: 10px 10px;
+
+        &:after {
+            position: absolute;
+            width: 100%;
+            height: 1.5px;
+            right: 0;
+            top: 0;
+            content: "";
+            background: $line-color;
+        }
+    }
+
+    &__button {
+        padding: 0;
+        margin-right: 8px;
+        outline: none;
+        border: none;
+        background: none;
+        cursor: pointer;
+
+        &__image {
+            width: 32px;
+            height: 32px;
+        }
+
+        &__more-image {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__add-comment {
+        position: relative;
+        height: 25px;
+        display: flex;
+        align-items: flex-end;
+
+        &__input {
+            width: calc(100% - 80px);
+            outline: none;
+            border: none;
+            font-size: 16px;
+            background: none;
+        }
+
+        &__send {
+            position: absolute;
+            right: 10px;
+            bottom: 0;
+            padding: 3px 7px;
+            border: none;
+            outline: none;
+            border-radius: 3px;
+            font-size: 16px;
+            background: rgb(166, 163, 232, 0.6);
+            cursor: pointer;
+        }
+    }
+}

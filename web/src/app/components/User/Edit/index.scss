@@ -1,0 +1,68 @@
+.user-edit {
+    margin: 0 auto;
+    width: 700px;
+    height: 100%;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.75);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.75);
+    padding: 30px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+
+    &__back-button {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+    }
+
+    &__file-label {
+        cursor: pointer;
+        display: block;
+        position: relative;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 30px;
+
+        &__text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            width: 140px;
+            left: 12px;
+            height: 30px;
+            bottom: 10px;
+            text-align: center;
+            background: rgba(171, 171, 171, 0.8);
+            font-size: 14px;
+        }
+    }
+
+    &__file-input {
+        display: none;
+    }
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        margin-bottom: 15px;
+
+        &__label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        &__input {
+            padding: 5px 11px;
+            font-size: 15px;
+            outline: none;
+        }
+    }
+}

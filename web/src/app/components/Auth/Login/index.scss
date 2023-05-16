@@ -1,0 +1,19 @@
+.login {
+    padding: 40px 60px;
+
+    &__textarea {
+        width: 400px;
+        font-size: 16px;
+        height: 200px;
+        padding: 7px 15px;
+        font-family: "Helvetica Neue", sans-serif;
+        outline: none;
+        border: 2px solid black;
+        border-radius: 3px;
+        resize: none;
+    }
+
+    & .authentication__submit {
+        margin-top: 30px;
+    }
+}
