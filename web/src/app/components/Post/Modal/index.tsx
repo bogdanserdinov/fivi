@@ -4,8 +4,8 @@ import { useState } from 'react';
 import commentIcon from '@static/img/post/commentIcon.png';
 import favoriteIcon from '@static/img/post/favoriteIcon.png';
 import closeIcon from '@static/img/User/Post/closeIcon.png';
-import moreIcon from '@static/img/User/Post/moreIcon.png'
-    import isFavoriteIcon from '@static/img/post/isFavoriteIcon.png';
+import moreIcon from '@static/img/User/Post/moreIcon.png';
+import isFavoriteIcon from '@static/img/post/isFavoriteIcon.png';
 
 import { Avatar } from '@components/common/Avatar';
 import { CommentPostModal } from '@components/Post/Modal/Comment';

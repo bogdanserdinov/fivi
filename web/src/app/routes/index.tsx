@@ -76,11 +76,11 @@ export class RoutesConfig {
 export class AuthRoutesConfig {
     public static Login: ComponentRoutes = new ComponentRoutes(
         '/login',
-        <Login/>,
+        <Login />,
     );
     public static Registration: ComponentRoutes = new ComponentRoutes(
         '/registration',
-        <Registration/>,
+        <Registration />,
     );
     /** Routes is an array of logical router components */
     public static routes: ComponentRoutes[] = [
@@ -90,18 +90,15 @@ export class AuthRoutesConfig {
 }
 
 export const Switch = () => {
-
-     const location = useLocation();
+    const location = useLocation();
     const navigate = useNavigate();
 
     const isLoggedin = true;
 
     useEffect(() => {
         if (!isLoggedin && location.pathname !== AuthRoutesConfig.Login.path) {
-            console.log(location.pathname )
             navigate(AuthRoutesConfig.Registration.path);
         } else if (!isLoggedin && location.pathname === AuthRoutesConfig.Login.path) {
-            console.log('hello')
             navigate(AuthRoutesConfig.Login.path);
         } else {
             navigate(RoutesConfig.Home.path);
@@ -139,5 +136,5 @@ export const Switch = () => {
                 </div>
             }
         </>
-        );
+    );
 };

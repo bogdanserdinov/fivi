@@ -9,7 +9,7 @@ const FIRST_SLIDE = 0;
 const CHECK_SLIDER_PHOTO_INDEX = 1;
 const ONE_PHOTO = 1;
 
-export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> = ({ sliderImages,classname }) => {
+export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> = ({ sliderImages, classname }) => {
     const [current, setCurrent] = useState<number>(FIRST_SLIDE);
     const sliderImagesLength = sliderImages.length;
 
@@ -37,7 +37,7 @@ export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> 
                                 className={` post-slider__item ${index === current ? 'active' : ''}`}
                             >
                                 {index === current &&
-                                   <div style={{ backgroundImage: `url(${ sliderImages[FIRST_SLIDE]} )`}} className="post-slider__item__image" />
+                                   <div style={{ backgroundImage: `url(${sliderImages[FIRST_SLIDE]} )` }} className="post-slider__item__image" />
                                 }
                             </div>
                         )}
@@ -49,7 +49,7 @@ export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> 
                     }
                 </>
                 :
-                <div style={{ backgroundImage: `url(${ sliderImages[FIRST_SLIDE]} )`}} className="post-slider__item__image" />}
+                <div style={{ backgroundImage: `url(${sliderImages[FIRST_SLIDE]} )` }} className="post-slider__item__image" />}
         </div>
     );
 };

@@ -1,66 +1,82 @@
+import { getLocalStorageItem } from '@/app/utils/localStorage';
+
 /**
  * HttpClient is a custom wrapper around fetch api.
  * Exposes get, post and delete methods for JSON.
  */
 export class HttpClient {
+    /** method to get the authorization token*/
+    public get authToken() {
+        return getLocalStorageItem('AUTH_TOKEN') || '';
+    }
     /**
    * Performs POST http request with JSON body.
    * @param path
    * @param body serialized JSON
+   * @param headers holds request header
    */
-    public async post(path: string, body?: string): Promise<Response> {
-        return await this.do('POST', path, body);
+    public async post(
+        path: string,
+        body?: string,
+        headers?: HeadersInit,
+    ): Promise<Response> {
+        return await this.do('POST', path, body, headers);
     }
 
     /**
    * Performs PATCH http request with JSON body.
    * @param path
    * @param body serialized JSON
+   * @param headers holds request header
    */
-    public async patch(path: string, body?: string): Promise<Response> {
-        return await this.do('PATCH', path, body);
+    public async patch(
+        path: string,
+        body?: string,
+        headers?: HeadersInit,
+    ): Promise<Response> {
+        return await this.do('PATCH', path, body, headers);
     }
 
     /**
    * Performs PUT http request with JSON body.
    * @param path
    * @param body serialized JSON
-   * @param _auth indicates if authentication is needed
-   */
+   * @param headers holds request header
+    */
     public async put(
         path: string,
         body?: string,
-        _auth = true
+        headers?: HeadersInit,
     ): Promise<Response> {
-        return await this.do('PUT', path, body);
+        return await this.do('PUT', path, body, headers);
     }
 
     /**
-   * Performs GET http request.
-   * @param path
-   * @param _auth indicates if authentication is needed
-   */
+     * Performs GET http request.
+     * @param path
+     * @param body serialized JSON
+     * @param headers holds request header
+    */
     public async get(
         path: string,
         body?: string,
-        _auth = true
+        headers?: HeadersInit,
     ): Promise<Response> {
-        return await this.do('GET', path);
+        return await this.do('GET', path, body, headers);
     }
 
     /**
-   * Performs DELETE http request.
-   * @param path
-   * @param _auth indicates if authentication is needed
-   */
-    /** TODO: DELETE method will be reworked after back-end remarks.
-   * Right now needs body here. */
+     * Performs DELETE http request.
+     * @param path
+     * @param body serialized JSON    headers?: HeadersInit,
+
+    */
     public async delete(
         path: string,
         body?: string,
-        _auth = true
+        headers?: HeadersInit,
     ): Promise<Response> {
-        return await this.do('DELETE', path, body);
+        return await this.do('DELETE', path, body, headers);
     }
 
     /**
@@ -68,19 +84,22 @@ export class HttpClient {
    * @param method holds http method type
    * @param path
    * @param body serialized JSON
+   * @param headers holds request header
    */
     private async do(
         method: string,
         path: string,
-        body?: string
+        body?: string,
+        headers: HeadersInit = { 'Content-Type': 'application/json' }
     ): Promise<Response> {
         const request: RequestInit = {
-            method: method,
-            body: body,
+            method,
+            body,
+            headers,
         };
 
-        request.headers = {
-            'Content-Type': 'application/json',
+        if (this.authToken) {
+            request.headers = { ...request.headers, Authorization: `Bearer ${this.authToken}` };
         };
 
         return await fetch(path, request);

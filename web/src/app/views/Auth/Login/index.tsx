@@ -1,6 +1,6 @@
-import { LoginPage } from "@components/Auth/Login";
+import { LoginPage } from '@components/Auth/Login';
 
-import '../index.scss'
+import '../index.scss';
 
 const Login = () =>
     <div className="auth">

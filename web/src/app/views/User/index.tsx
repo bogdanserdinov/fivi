@@ -10,17 +10,17 @@ import { user } from '@/mocked/user';
 import './index.scss';
 
 const User = () => {
-    const [isOpenSubscribesModal,setIsOpenSubscribesModal]=useState(false)
-    const [isOpenSubscribersModal, setIsOpenSubscribersModal] = useState(false)
-    const location=useLocation()
-    
+    const [isOpenSubscribesModal, setIsOpenSubscribesModal]=useState(false);
+    const [isOpenSubscribersModal, setIsOpenSubscribersModal] = useState(false);
+    const location=useLocation();
+
     const openSubscribers = () => {
-        setIsOpenSubscribersModal(true)
-        setIsOpenSubscribesModal(false)
+        setIsOpenSubscribersModal(true);
+        setIsOpenSubscribesModal(false);
     };
     const openSubscribes = () => {
-        setIsOpenSubscribesModal(true)
-        setIsOpenSubscribersModal(false)
+        setIsOpenSubscribesModal(true);
+        setIsOpenSubscribersModal(false);
     };
 
     return (
@@ -35,12 +35,12 @@ const User = () => {
                     </div>
                     <div className="user__info">
                         <p className="user__info__text">{user.posts.length} публікацій</p>
-                        <div className="user__info__text user__info__text--clickable" 
+                        <div className="user__info__text user__info__text--clickable"
                             onClick={() => openSubscribers()}
                         >
                             {user.subscribers.length} підписники
                         </div>
-                        <div className="user__info__text user__info__text--clickable" 
+                        <div className="user__info__text user__info__text--clickable"
                             onClick={() => openSubscribes()}
                         >
                             {user.subscribes.length} підписки
@@ -55,7 +55,7 @@ const User = () => {
                 )}
             </div>
             {isOpenSubscribersModal && <UserSubscribersModal setIsOpenModal={setIsOpenSubscribersModal} subscribers={user.subscribers} />}
-            {isOpenSubscribesModal && <UserSubscribesModal setIsOpenModal={setIsOpenSubscribesModal}  subscribes={user.subscribes} />}
+            {isOpenSubscribesModal && <UserSubscribesModal setIsOpenModal={setIsOpenSubscribesModal} subscribes={user.subscribes} />}
         </div>
     );
 };

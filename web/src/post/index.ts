@@ -7,6 +7,13 @@ export class Comment {
     ) { }
 }
 
+export class CommentCreate {
+    public constructor(
+        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public text: string = '',
+    ) { }
+}
+
 export class Post {
     public constructor(
         public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
@@ -14,7 +21,23 @@ export class Post {
         public isFavorite: boolean = false,
         public description: string = '',
         public comments: Comment[] = [],
-        public posts: [] = []
     ) { };
 }
+
+export class PostAddData {
+    public constructor(
+        public text: string = '',
+        public images: string[] = [],
+    ) { };
+}
+
+
+export class PostUpdateData {
+    public constructor(
+        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public text: string = '',
+        public images: string[] = [],
+    ) { };
+}
+
 

@@ -5,21 +5,21 @@ const subcscribes = {
     id: '00000000-0000-0000-0000-000000000000',
     avatar: mockedAvatar,
     nickname: 'ann_ann',
-}
+};
 
 const subcscribers = {
     id: '00000000-0000-0000-0000-000000000000',
     avatar: mockedAvatar,
     nickname: 'ann_ann',
-    isSubcribe: false
-}
+    isSubcribe: false,
+};
 
 const subcscribers1 = {
     id: '00000000-0000-0000-0000-000000000000',
     avatar: mockedAvatar,
     nickname: 'ann_ann',
-    isSubcribe: true
-}
+    isSubcribe: true,
+};
 
 export const user = {
     id: '00000000-0000-0000-0000-000000000000',
@@ -33,7 +33,7 @@ export const user = {
         post, post, post, post, post, post,
     ],
     subscribers: [
-        subcscribers, subcscribers1, subcscribers1, subcscribers, subcscribers, subcscribers, subcscribers, subcscribers
+        subcscribers, subcscribers1, subcscribers1, subcscribers, subcscribers, subcscribers, subcscribers, subcscribers,
     ],
     subscribes: [
         subcscribes, subcscribes, subcscribes, subcscribes, subcscribes, subcscribes, subcscribes,

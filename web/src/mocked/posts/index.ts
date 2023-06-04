@@ -22,10 +22,10 @@ export const post = {
         id: 'csafasf',
         creatorAvatar: mockedAvatar,
         name: 'afwsfwf',
-        nickname: 'scaskcinas'
+        nickname: 'scaskcinas',
     },
     comments: [comment, comment, comment, comment, comment, comment, comment, comment, comment, comment, comment],
-}
+};
 
 export const posts = [
     post, post, post, post, post, post,

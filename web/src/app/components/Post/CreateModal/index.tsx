@@ -1,32 +1,31 @@
-import { Modal } from "@components/common/Modal";
+import { ChangeEvent, useState } from 'react';
 
-import addPhotoIcon from "@img/post/addPhotoIcon.png";
-import closeIcon from "@img/User/Post/closeIcon.png";
-import { ChangeEvent, useState } from "react";
+import { Modal } from '@components/common/Modal';
 
+import addPhotoIcon from '@img/post/addPhotoIcon.png';
+import closeIcon from '@img/User/Post/closeIcon.png';
 
 import './index.scss';
 
 export const PostCreateModal: React.FC<{
-    setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+    setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }>
     = ({ setIsOpenModal }) => {
-
         const [files, setFiles] = useState<string[]>();
         const removePhoto = (index: number) => {
             if (files) {
                 const galleryImagesData = [...files];
-                galleryImagesData?.splice(index, 1)
-                setFiles(galleryImagesData)
-                console.log(galleryImagesData?.splice(index, 1))
+                galleryImagesData?.splice(index, 1);
+                setFiles(galleryImagesData);
             }
-        }
+        };
 
         const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.files?.length) {
                 setFiles([URL.createObjectURL(e.target.files[0])]);
             }
         };
+
         return (
             <Modal setIsOpenModal={setIsOpenModal}>
 
@@ -77,5 +76,5 @@ export const PostCreateModal: React.FC<{
                     </button>
                 </form>
             </Modal>
-        )
-    }
+        );
+    };

@@ -1,19 +1,19 @@
-import { Avatar } from "@components/common/Avatar"
-import { Modal } from "@components/common/Modal"
-import { Link } from "react-router-dom"
+import { Avatar } from '@components/common/Avatar';
+import { Modal } from '@components/common/Modal';
+import { Link } from 'react-router-dom';
 
-import './index.scss'
+import './index.scss';
 
 export const UserSubscribesModal: React.FC<{
-    subscribes: any,
-    setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+    subscribes: any;
+    setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ subscribes, setIsOpenModal }) => {
     const rejectSubscribe = () => {
-        
-    }
+
+    };
 
     return (
-       <Modal setIsOpenModal={setIsOpenModal}>
+        <Modal setIsOpenModal={setIsOpenModal}>
             <div className="subscribes">
                 {subscribes ?
                     subscribes.map((subscribe: any) =>
@@ -31,5 +31,5 @@ export const UserSubscribesModal: React.FC<{
                 }
             </div>
         </Modal>
-    )
-}
+    );
+};

@@ -1,13 +1,38 @@
-import './index.scss'
-import '../index.scss'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-import copyIcon from '@img/Auth/copy.png'
-const MOCKED__PHRASES = [
-    'tool', 'tell', 'boy', 'mom', 'ball', 'rate', 'strike', 'lady', 'trial', 'banner', 'oppose', 'uphold'
-]
+import copyIcon from '@img/Auth/copy.png';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
+import { RootState } from '@/app/store';
+
+import { getMnemonicPhrases, register } from '@/app/store/actions/users';
+import { UserRegisterData } from '@/users';
+import { RoutesConfig } from '@/app/routes';
+
+
+import './index.scss';
+import '../index.scss';
 
 export const RegistrationPage = () => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+
+    const mnemonicPhrases: string[] | null = useAppSelector((state: RootState) => state.usersReducer.mnemonicPhrases);
+
+    const registerUser = async() => {
+        await dispatch(register(new UserRegisterData(email, username, mnemonicPhrases)));
+
+        await window.localStorage.setItem('IS_LOGGEDIN', JSON.stringify(true));
+
+        navigate(RoutesConfig.Home.path);
+    };
+
+    useEffect(() => {
+        dispatch(getMnemonicPhrases());
+    }, []);
 
     return (
         <div className="registration">
@@ -21,7 +46,7 @@ export const RegistrationPage = () => {
 
             <h2 className="authentication__subtitle">Secret recovery phrase</h2>
             <div className="registration__phrases">
-                {MOCKED__PHRASES.map((phrase, index) =>
+                {mnemonicPhrases.map((phrase, index) =>
                     <div className="registration__phrases__item" key={phrase}>
                         {index}
                         <div className="registration__phrases__item__block">
@@ -29,17 +54,33 @@ export const RegistrationPage = () => {
                         </div>
                     </div>
                 )}
-                 <button className="registration__copy">
-                <img src={copyIcon} alt='copy icon' className="registration__copy__icon" /> Copy
-            </button>
+                <button className="registration__copy">
+                    <img src={copyIcon} alt="copy icon" className="registration__copy__icon" /> Copy
+                </button>
             </div>
-           
+
             <h2 className="authentication__subtitle">Add your data</h2>
             <form className="authentication__form">
-                <input type='text' placeholder='Username' className="authentication__input" />
-                <input type='email' placeholder='Email' className="authentication__input" />
+                <input
+                    type="text"
+                    placeholder="Username"
+                    className="authentication__input"
+                    onChange={e => setUsername(e.target.value)}
+                />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="authentication__input"
+                    onChange={e => setEmail(e.target.value)}
+                />
             </form>
-            <button type="button"className="authentication__submit" >Register</button>
-        </div>
-    )
-}
+            <button
+                type="button"
+                className="authentication__submit"
+                onClick={() => registerUser()}
+            >
+                Register
+            </button>
+        </div >
+    );
+};

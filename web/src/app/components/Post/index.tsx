@@ -34,19 +34,19 @@ export const Post: React.FC<{ post: any }> = ({ post }) => {
                 </Link>
                 <PostSlider sliderImages={post.photos} />
                 <div className="post__bottom-side">
-                    <button className="post__button" onClick={()=>setIsFavoritePost(!isFavoritePost)}>
+                    <button className="post__button" onClick={() => setIsFavoritePost(!isFavoritePost)}>
                         {isFavoritePost ?
-                        <img
-                            className="post__button__image"
-                            src={isFavoriteIcon}
+                            <img
+                                className="post__button__image"
+                                src={isFavoriteIcon}
                                 alt="favorite" />
                             :
-                        <img
-                            className="post__button__image"
-                            src={favoriteIcon}
+                            <img
+                                className="post__button__image"
+                                src={favoriteIcon}
                                 alt="favorite" />
                         }
-                        
+
                     </button>
                     <button className="post__button">
                         <img

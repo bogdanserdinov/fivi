@@ -1,46 +1,41 @@
-import { Avatar } from "@components/common/Avatar";
-import { Modal } from "@components/common/Modal"
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Avatar } from '@components/common/Avatar';
+import { Modal } from '@components/common/Modal';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import addPhotoIcon from '@img/post/addPhotoIcon.png'
-import closeIcon from '@img/User/Post/closeIcon.png'
+import addPhotoIcon from '@img/post/addPhotoIcon.png';
+import closeIcon from '@img/User/Post/closeIcon.png';
 
-import './index.scss'
+import './index.scss';
 
 export const EditingModal: React.FC<{
     setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-    post: any
+    post: any;
 }> = ({ setIsOpenModal, post }) => {
-
     const [files, setFiles] = useState<string[]>(post.photos);
     const [description, setDescription] = useState(post.description);
     const [currentPhoto, setCurrentPhoto] = useState(post.photos[0]);
 
     const onChangeDescription = (e: any) => {
-        setDescription(e.target.value)
-    }
+        setDescription(e.target.value);
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.length) {
-            const photos = [...files]
-            photos.concat([URL.createObjectURL(e.target.files[0])])
+            const photos = [...files];
+            photos.concat([URL.createObjectURL(e.target.files[0])]);
             setFiles(photos);
-            console.log([...files, ...[URL.createObjectURL(e.target.files[0])]])
-            console.log(files)
         }
     };
 
     const removePhoto = (e: any, index: number) => {
-        e.stopPropagation()
+        e.stopPropagation();
         if (files) {
             const galleryImagesData = [...files];
-            galleryImagesData?.splice(index, 1)
-            setFiles(galleryImagesData)
-            console.log(galleryImagesData?.splice(index, 1))
+            galleryImagesData?.splice(index, 1);
+            setFiles(galleryImagesData);
         }
-
-    }
+    };
 
     return (
         <Modal classname="editing-modal" setIsOpenModal={setIsOpenModal}>
@@ -61,8 +56,8 @@ export const EditingModal: React.FC<{
                                         onClick={() => setCurrentPhoto(photo)}
                                         className="editing-modal__mini-photos__item"
                                     >
-                                        <img src={closeIcon} alt="close icon" className="editing-modal__mini-photos__item__close" onClick={(e)=>removePhoto(e,index)}/>
-                                        </div>
+                                        <img src={closeIcon} alt="close icon" className="editing-modal__mini-photos__item__close" onClick={(e) => removePhoto(e, index)} />
+                                    </div>
 
                                 )}
                             </div>
@@ -99,5 +94,5 @@ export const EditingModal: React.FC<{
                 </div>
             </div>
         </Modal>
-    )
-}
+    );
+};
