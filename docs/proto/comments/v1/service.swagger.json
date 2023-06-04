@@ -1,0 +1,167 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/comments/v1/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Service"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/comments/v1": {
+      "post": {
+        "summary": "Create a comment.",
+        "operationId": "Service_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request for Create method.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/api/comments/v1/comments/{post_id}": {
+      "get": {
+        "summary": "Get comment by identifier.",
+        "operationId": "Service_GetByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetByIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Comment": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "post_id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "user_image": {
+          "type": "string"
+        }
+      },
+      "description": "Represents an comment object.",
+      "required": [
+        "identifier",
+        "text",
+        "post_id",
+        "username",
+        "user_image"
+      ]
+    },
+    "v1CreateRequest": {
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "description": "Request for Create method."
+    },
+    "v1GetByIDResponse": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Comment"
+          }
+        }
+      },
+      "description": "Represents a GetByIDResponse object."
+    }
+  }
+}

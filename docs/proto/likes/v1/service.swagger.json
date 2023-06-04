@@ -1,0 +1,199 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/likes/v1/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Service"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/likes/v1": {
+      "post": {
+        "summary": "Adds or removes a like.",
+        "operationId": "Service_Like",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request for Like method.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LikeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/api/likes/v1/post/{post_id}": {
+      "get": {
+        "summary": "Returns list of likes by relation type and id.",
+        "operationId": "Service_GetLikes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLikesByPostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/api/likes/v1/post/{post_id}/count": {
+      "get": {
+        "summary": "Returns number of likes by relation type and id.",
+        "operationId": "Service_GetNumberOfLikes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CountPostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CountPostResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "description": "Represents a response for CountByRelationIDRequest method.",
+      "required": [
+        "count"
+      ]
+    },
+    "v1GetLikesByPostResponse": {
+      "type": "object",
+      "properties": {
+        "likes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Like"
+          }
+        }
+      },
+      "description": "Represents a GetLikesByRelationIDResponse object."
+    },
+    "v1Like": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "post_id": {
+          "type": "string"
+        }
+      },
+      "description": "Represents a like object.",
+      "required": [
+        "id",
+        "post_id"
+      ]
+    },
+    "v1LikeRequest": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "string"
+        }
+      },
+      "description": "Request for Like method.",
+      "required": [
+        "post_id"
+      ]
+    }
+  }
+}

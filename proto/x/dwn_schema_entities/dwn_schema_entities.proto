@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package dwn_schema_entities.v1;
+
+option go_package = "github.com/getZION/zion-relay/gen/go/x/dwn_schema_entities;dwn_schema_entitiespb";
+
+message Person {
+  string identifier = 1;
+}
+
+message Image {
+  string identifier = 1; // uuid v4 identifier of this content
+  string caption    = 2; // optional caption
+  string url        = 3; // standard image url
+  string embedUrl   = 4; // base64 encoded image data
+}
+
+message LightPost {
+  string identifier = 1;
+}

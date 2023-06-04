@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package comments.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "fivi/gen/go/comments/v1;pb_comments";
+
+service Service {
+  // Create a comment.
+  rpc Create(CreateRequest) returns (google.protobuf.Empty) {
+     option (google.api.http) = {
+       post: "/api/comments/v1"
+       body: "*"
+     };
+  };
+
+  // Get comment by identifier.
+  rpc GetByID(GetByIDRequest) returns (GetByIDResponse) {
+    option (google.api.http) = {
+      get: "/api/comments/v1/comments/{post_id}"
+    };
+  };
+};
+
+// Represents an comment object.
+message Comment {
+  string identifier                              = 1 [json_name = "identifier", (google.api.field_behavior) = REQUIRED];
+  string text                                    = 2 [json_name = "text", (google.api.field_behavior) = REQUIRED];
+  string post_id = 3 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+  string username = 4 [json_name = "username", (google.api.field_behavior) = REQUIRED];
+  string user_image = 5 [json_name = "user_image", (google.api.field_behavior) = REQUIRED];
+};
+
+// Request for Create method.
+message CreateRequest {
+  string post_id = 1;
+  string text    = 2;
+};
+
+// Represents a CreateResponse object.
+message CreateResponse {
+  Comment comment = 1 [json_name = "comment"];
+};
+
+// Request for GetByID method.
+message GetByIDRequest {
+  string post_id = 1 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Represents a GetByIDResponse object.
+message GetByIDResponse {
+  repeated Comment comments = 1 [json_name = "comments"];
+};
