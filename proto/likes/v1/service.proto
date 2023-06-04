@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package likes.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "fivi/gen/go/likes/v1;pb_likes";
+
+service Service {
+    // Adds or removes a like.
+    rpc Like(LikeRequest) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/api/likes/v1"
+            body: "*"
+        };
+    };
+
+    // Returns number of likes by relation type and id.
+    rpc GetNumberOfLikes(CountPostLikesRequest) returns (CountPostResponse){
+        option (google.api.http) = {
+            get: "/api/likes/v1/post/{post_id}/count"
+        };
+    };
+
+    // Returns list of likes by relation type and id.
+    rpc GetLikes(GetListByPostRequest) returns (GetLikesByPostResponse) {
+        option (google.api.http) = {
+            get: "/api/likes/v1/post/{post_id}"
+        };
+    };
+}
+
+// Represents a like object.
+message Like {
+    string id                            = 1 [json_name = "id", (google.api.field_behavior) = REQUIRED];
+    string post_id                       = 2 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Request for Like method.
+message LikeRequest {
+    string post_id                       = 1 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Request for CountByRelationID method.
+message CountPostLikesRequest {
+    string post_id = 2 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Represents a response for CountByRelationIDRequest method.
+message CountPostResponse {
+    int32 count = 1 [json_name = "count", (google.api.field_behavior) = REQUIRED];
+};
+
+// Request for GetListByRelationIDRequest method.
+message GetListByPostRequest {
+    string post_id = 1 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Represents a GetLikesByRelationIDResponse object.
+message GetLikesByPostResponse {
+    repeated Like likes = 1 [json_name = "likes"];
+};

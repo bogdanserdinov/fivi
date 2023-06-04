@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package x.pagination.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "github.com/getZION/zion-relay/gen/go/x/pagination;pagination";
+
+// Represents pagination parameters.
+message Pagination {
+  bool has_next   = 1 [json_name = "has_next", (google.api.field_behavior) = OUTPUT_ONLY]; // Has next page?
+  bool has_prev   = 2 [json_name = "has_prev", (google.api.field_behavior) = OUTPUT_ONLY]; // Has previous page?
+  int32 page_num  = 3 [json_name = "page_num", (google.api.field_behavior) = OPTIONAL];    // Page number.
+  int32 page_size = 4 [json_name = "page_size", (google.api.field_behavior) = OPTIONAL];   // Page size.
+  int32 total     = 5 [json_name = "total", (google.api.field_behavior) = OUTPUT_ONLY];    // Total results.
+};

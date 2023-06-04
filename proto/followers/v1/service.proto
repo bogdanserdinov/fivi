@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package followers.v1;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "fivi/gen/go/followers/v1;followers";
+
+service FollowersService {
+  rpc Follow(FollowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/followers/v1"
+      body: "*"
+    };
+  };
+
+  rpc Unfollow(UnFollowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/followers/v1/follower/{id}"
+    };
+  };
+
+  rpc ListFollowers(ListFollowersRequest) returns (ListFollowersResponse) {
+    option (google.api.http) = {
+      get: "/api/followers/v1"
+    };
+  };
+
+  rpc ListFollowings(ListFollowingsRequest) returns (ListFollowingsResponse) {
+    option (google.api.http) = {
+      get: "/api/followers/v1/followings"
+    };
+  };
+
+  rpc CountFollowers(CountFollowersRequest) returns (CountFollowersResponse) {
+    option (google.api.http) = {
+      get: "/api/followers/v1/count"
+    };
+  };
+
+  rpc CountFollowings(CountFollowingsRequest) returns (CountFollowingsResponse) {
+    option (google.api.http) = {
+      get: "/api/followers/v1/followings/count"
+    };
+  };
+
+  rpc IsFollowing(IsFollowingRequest) returns (IsFollowingResponse) {};
+};
+
+message Follower {
+  string username = 1;
+  string id = 2;
+}
+
+message FollowRequest {
+  string user_id = 1;
+  string user_to_follow_id = 2;
+};
+
+message UnFollowRequest {
+  string id = 1;
+};
+
+message ListFollowersRequest {
+  string user_id = 1;
+}
+
+message ListFollowersResponse {
+  repeated Follower followers = 1;
+}
+
+message ListFollowingsRequest {
+  string user_id = 1;
+}
+
+message ListFollowingsResponse {
+  repeated Follower followings = 1;
+}
+
+message CountFollowersRequest {
+  string user_id = 1;
+}
+
+message CountFollowersResponse {
+  int32 count = 1;
+}
+
+message CountFollowingsRequest {
+  string user_id = 1;
+}
+
+message CountFollowingsResponse {
+  int32 count = 1;
+}
+
+message IsFollowingRequest {
+  string user_id = 1;
+  string user_to_follow_id = 2;
+}
+
+message IsFollowingResponse {
+  bool is_follow = 1;
+}

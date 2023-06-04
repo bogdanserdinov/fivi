@@ -1,0 +1,199 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/did/v1/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "DID"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/did/v1/message/generate": {
+      "post": {
+        "operationId": "DID_GetMessageToSign",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1MessageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DID"
+        ]
+      }
+    },
+    "/api/did/v1/register": {
+      "post": {
+        "operationId": "DID_RegisterURIMapping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DIDMappingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DIDMappingRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DID"
+        ]
+      }
+    },
+    "/api/did/v1/signature/verify": {
+      "post": {
+        "operationId": "DID_VerifySignature",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1VerifySignatureResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1VerifySignatureRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DID"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1DIDMappingRequest": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string"
+        },
+        "longFormUri": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DIDMappingResponse": {
+      "type": "object",
+      "properties": {
+        "userName": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MessageRequest": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MessageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "v1VerifySignatureRequest": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string"
+        },
+        "jws": {
+          "type": "string"
+        }
+      }
+    },
+    "v1VerifySignatureResponse": {
+      "type": "object",
+      "properties": {
+        "jwt": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

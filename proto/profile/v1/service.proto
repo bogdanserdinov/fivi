@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package profile.v1;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "fivi/gen/go/profile/v1;profilepb";
+
+service ProfileService {
+  rpc GenerateMnemonic (google.protobuf.Empty) returns (GenerateMnemonicResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/generate"
+      body: "*"
+    };
+  };
+  rpc Register (RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/register"
+      body: "*"
+    };
+  };
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/v1/login"
+      body: "*"
+    };
+  };
+  rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/api/profile/v1"
+      body: "*"
+    };
+  };
+  rpc GetProfileByDID(google.protobuf.Empty) returns (Person) {
+    option (google.api.http) = {
+      get: "/api/profile/v1"
+    };
+  };
+  rpc GetProfileByDIDNoAuth(GetProfileByDIDRequest) returns (Person) {};
+  rpc SearchDIDsByUsername(SearchDIDsByUsernameRequest) returns (SearchDIDsByUsernameResponse) {
+    option (google.api.http) = {
+      get: "/api/profile/v1/search"
+    };
+  };
+};
+
+message GenerateMnemonicResponse {
+  repeated string mnemonic = 1;
+}
+
+message RegisterRequest {
+  repeated string mnemonic = 1;
+  string email = 2;
+  string name = 3;
+  string full_name = 4;
+}
+
+message RegisterResponse {
+  string jwt = 1;
+}
+
+message LoginRequest {
+  string username = 1;
+  repeated string mnemonic = 2;
+}
+
+message LoginResponse {
+  string jwt = 1;
+}
+
+message CreateProfileRequest {
+  string name                        = 1; // Name.
+  string username                    = 2; // User name.
+  string image = 3;
+};
+
+message UpdateProfileRequest {
+  string name                        = 1; // Name.
+  string username                    = 2; // User name.
+  string image = 3;
+};
+
+message GetProfileByDIDRequest {
+  string user_did = 1;
+}
+
+message GetUsernameByDIDRequest {
+  string user_did = 1;
+}
+
+message GetUsernameByDIDResponse {
+  string username = 1;
+}
+
+message GetProfileByUsernameRequest {
+  string username = 1;
+}
+
+message GetProfileByEmailRequest {
+  string email = 1;
+}
+
+message Person {
+  // Standard fields
+  string id = 1;
+  string name                        = 2; // Name.
+  string username                    = 3; // User name.
+};
+
+message SearchDIDsByUsernameRequest {
+  string username                       = 1;
+}
+
+message SearchDIDsByUsernameResponse {
+  repeated Person profiles                  = 1;
+}

@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package posts.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "fivi/gen/go/posts/v1;pb_posts";
+
+service Service {
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {
+     option (google.api.http) = {
+       post: "/api/posts/v1/posts"
+       body: "*"
+     };
+  };
+
+  // Get a post by identifier.
+  rpc GetPost(GetPostRequest) returns (GetPostResponse) {
+    option (google.api.http) = {
+      get: "/api/posts/v1/post/{identifier}"
+    };
+  };
+
+  // Get posts by creator id.
+  rpc GetPostsByCreator(GetPostsByCreatorRequest) returns (GetPostsByCreatorResponse) {
+    option (google.api.http) = {
+      get: "/api/posts/v1/creator/{user_id}"
+    };
+  };
+
+  // Update a post.
+  rpc UpdatePost(UpdatePostRequest) returns (google.protobuf.Empty) {
+     option (google.api.http) = {
+       put: "/v1/posts/post/{identifier}"
+       body: "*"
+     };
+  };
+
+  // Delete a post.
+  rpc DeletePost(DeletePostRequest) returns (google.protobuf.Empty) {
+     option (google.api.http) = {
+       delete: "/v1/posts/post/{identifier}"
+     };
+  };
+
+  rpc ListPosts(google.protobuf.Empty) returns (ListPostsResponse) {
+    option (google.api.http) = {
+      get: "/api/posts/v1/posts"
+    };
+  };
+};
+
+// Represents a post.
+message Post {
+  string identifier                              = 1 [json_name = "identifier", (google.api.field_behavior) = REQUIRED];
+  string text                                    = 2 [json_name = "text", (google.api.field_behavior) = OPTIONAL];
+  string creator_id = 3 [json_name = "creator_id", (google.api.field_behavior) = OPTIONAL];
+  string creator_username = 4 [json_name = "creator_username", (google.api.field_behavior) = OPTIONAL];
+  repeated string images = 5 [json_name = "images", (google.api.field_behavior) = OPTIONAL];
+  int32 num_of_images = 6 [json_name = "num_of_images", (google.api.field_behavior) = OPTIONAL];
+  int32 num_of_likes = 7 [json_name = "num_of_likes", (google.api.field_behavior) = OPTIONAL];
+};
+
+// Request for CreatePost.
+message CreatePostRequest {
+  string text = 1 [json_name = "text", (google.api.field_behavior) = OPTIONAL];
+  repeated string images = 2 [json_name = "images", (google.api.field_behavior) = OPTIONAL];
+};
+
+// Response for CreatePost.
+message CreatePostResponse {};
+
+// Request for GetPost.
+message GetPostRequest {
+  string identifier = 1 [json_name = "identifier", (google.api.field_behavior) = REQUIRED];
+};
+
+// Response for GetPost.
+message GetPostResponse {
+  Post post = 1 [json_name = "post"];
+};
+
+// Request for GetPostsByCreator.
+message GetPostsByCreatorRequest {
+  string user_id                         = 1 [json_name = "user_id", (google.api.field_behavior) = REQUIRED];
+};
+
+// Response for GetPostsByCreator.
+message GetPostsByCreatorResponse {
+  repeated Post posts                   = 1 [json_name = "posts"];
+};
+
+// Request for UpdatePost.
+message UpdatePostRequest {
+  string identifier = 1 [json_name = "identifier", (google.api.field_behavior) = REQUIRED];
+  string text       = 2 [json_name = "text", (google.api.field_behavior) = OPTIONAL];
+  repeated string images = 3 [json_name = "images", (google.api.field_behavior) = OPTIONAL];
+};
+
+// Response for UpdatePost.
+message UpdatePostResponse {
+  string text = 1 [json_name = "text", (google.api.field_behavior) = REQUIRED];
+  repeated string images = 2 [json_name = "images", (google.api.field_behavior) = REQUIRED];
+};
+
+// Request for DeletePost.
+message DeletePostRequest {
+  string identifier = 1 [json_name = "identifier", (google.api.field_behavior) = REQUIRED];
+};
+
+message ListPostsRequest {
+}
+
+message ListPostsResponse {
+    repeated Post posts                   = 1 [json_name = "post"];
+}
+
+message ListUserPostsRequest {
+  string user_id = 1 [json_name = "user_id", (google.api.field_behavior) = REQUIRED];
+}
+
+message ListPostsUserResponse {
+  repeated Post post                    = 1 [json_name = "post"];
+}

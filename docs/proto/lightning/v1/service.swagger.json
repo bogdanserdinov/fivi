@@ -1,0 +1,441 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/lightning/v1/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "LightningService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/lightning/v1/balance": {
+      "get": {
+        "operationId": "LightningService_GetBalance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetBalanceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "LightningService"
+        ]
+      }
+    },
+    "/api/lightning/v1/invoice": {
+      "post": {
+        "operationId": "LightningService_CreateInvoice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateInvoiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateInvoiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LightningService"
+        ]
+      }
+    },
+    "/api/lightning/v1/payment/send/to/route": {
+      "get": {
+        "operationId": "LightningService_SendToRoute",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendToRouteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "LightningService"
+        ]
+      }
+    },
+    "/api/lightning/v1/transactions": {
+      "get": {
+        "operationId": "LightningService_ListTransactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "LightningService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "InvoiceInvoiceState": {
+      "type": "string",
+      "enum": [
+        "OPEN",
+        "SETTLED",
+        "CANCELED",
+        "ACCEPTED"
+      ],
+      "default": "OPEN"
+    },
+    "lightningv1Transaction": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/v1TransactionStatus"
+        },
+        "type": {
+          "$ref": "#/definitions/v1TransactionType"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "lnrpcAMP": {
+      "type": "object",
+      "properties": {
+        "rootShare": {
+          "type": "string",
+          "format": "byte",
+          "description": "An n-of-n secret share of the root seed from which child payment hashes\nand preimages are derived."
+        },
+        "setId": {
+          "type": "string",
+          "format": "byte",
+          "description": "An identifier for the HTLC set that this HTLC belongs to."
+        },
+        "childIndex": {
+          "type": "integer",
+          "format": "int64",
+          "description": "A nonce used to randomize the child preimage and child hash from a given\nroot_share."
+        },
+        "hash": {
+          "type": "string",
+          "format": "byte",
+          "description": "The payment hash of the AMP HTLC."
+        },
+        "preimage": {
+          "type": "string",
+          "format": "byte",
+          "description": "The preimage used to settle this AMP htlc. This field will only be\npopulated if the invoice is in InvoiceState_ACCEPTED or\nInvoiceState_SETTLED."
+        }
+      },
+      "description": "Details specific to AMP HTLCs."
+    },
+    "lnrpcAMPInvoiceState": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "$ref": "#/definitions/lnrpcInvoiceHTLCState",
+          "description": "The state the HTLCs associated with this setID are in."
+        },
+        "settleIndex": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The settle index of this HTLC set, if the invoice state is settled."
+        },
+        "settleTime": {
+          "type": "string",
+          "format": "int64",
+          "description": "The time this HTLC set was settled expressed in unix epoch."
+        },
+        "amtPaidMsat": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total amount paid for the sub-invoice expressed in milli satoshis."
+        }
+      }
+    },
+    "lnrpcFeature": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isRequired": {
+          "type": "boolean"
+        },
+        "isKnown": {
+          "type": "boolean"
+        }
+      }
+    },
+    "lnrpcHopHint": {
+      "type": "object",
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "description": "The public key of the node at the start of the channel."
+        },
+        "chanId": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The unique identifier of the channel."
+        },
+        "feeBaseMsat": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The base fee of the channel denominated in millisatoshis."
+        },
+        "feeProportionalMillionths": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The fee rate of the channel for sending one satoshi across it denominated in\nmillionths of a satoshi."
+        },
+        "cltvExpiryDelta": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The time-lock delta of the channel."
+        }
+      }
+    },
+    "lnrpcInvoiceHTLC": {
+      "type": "object",
+      "properties": {
+        "chanId": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Short channel id over which the htlc was received."
+        },
+        "htlcIndex": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Index identifying the htlc on the channel."
+        },
+        "amtMsat": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The amount of the htlc in msat."
+        },
+        "acceptHeight": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Block height at which this htlc was accepted."
+        },
+        "acceptTime": {
+          "type": "string",
+          "format": "int64",
+          "description": "Time at which this htlc was accepted."
+        },
+        "resolveTime": {
+          "type": "string",
+          "format": "int64",
+          "description": "Time at which this htlc was settled or canceled."
+        },
+        "expiryHeight": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Block height at which this htlc expires."
+        },
+        "state": {
+          "$ref": "#/definitions/lnrpcInvoiceHTLCState",
+          "description": "Current state the htlc is in."
+        },
+        "customRecords": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          },
+          "description": "Custom tlv records."
+        },
+        "mppTotalAmtMsat": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The total amount of the mpp payment in msat."
+        },
+        "amp": {
+          "$ref": "#/definitions/lnrpcAMP",
+          "description": "Details relevant to AMP HTLCs, only populated if this is an AMP HTLC."
+        }
+      },
+      "title": "Details of an HTLC that paid to an invoice"
+    },
+    "lnrpcInvoiceHTLCState": {
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "SETTLED",
+        "CANCELED"
+      ],
+      "default": "ACCEPTED"
+    },
+    "lnrpcRouteHint": {
+      "type": "object",
+      "properties": {
+        "hopHints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/lnrpcHopHint"
+          },
+          "description": "A list of hop hints that when chained together can assist in reaching a\nspecific destination."
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateInvoiceRequest": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "memo": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateInvoiceResponse": {
+      "type": "object",
+      "properties": {
+        "invoice": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ListTransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "transactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/lightningv1Transaction"
+          }
+        }
+      }
+    },
+    "v1SendToRouteResponse": {
+      "type": "object"
+    },
+    "v1TransactionStatus": {
+      "type": "string",
+      "enum": [
+        "TRANSACTION_STATUS_UNSPECIFIED",
+        "TRANSACTION_STATUS_FAILED",
+        "TRANSACTION_STATUS_SUCCESS",
+        "TRANSACTION_STATUS_PENDING"
+      ],
+      "default": "TRANSACTION_STATUS_UNSPECIFIED",
+      "title": "- TRANSACTION_STATUS_UNSPECIFIED: -\n - TRANSACTION_STATUS_FAILED: Failed.\n - TRANSACTION_STATUS_SUCCESS: Success.\n - TRANSACTION_STATUS_PENDING: Pending"
+    },
+    "v1TransactionType": {
+      "type": "string",
+      "enum": [
+        "TRANSACTION_TYPE_UNSPECIFIED",
+        "TRANSACTION_TYPE_INCOMING",
+        "TRANSACTION_TYPE_OUTGOING"
+      ],
+      "default": "TRANSACTION_TYPE_UNSPECIFIED",
+      "description": " - TRANSACTION_TYPE_UNSPECIFIED: -\n - TRANSACTION_TYPE_INCOMING: Incoming.\n - TRANSACTION_TYPE_OUTGOING: Outgoing."
+    }
+  }
+}

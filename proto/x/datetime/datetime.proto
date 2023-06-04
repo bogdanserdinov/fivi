@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package datetime.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/getZION/zion-relay/gen/go/x/datetime;datetimepb";
+
+message DateTime {
+  google.protobuf.Timestamp dateTime = 1;
+}

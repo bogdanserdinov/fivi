@@ -1,0 +1,301 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/followers/v1/service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "FollowersService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/followers/v1": {
+      "get": {
+        "operationId": "FollowersService_ListFollowers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListFollowersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      },
+      "post": {
+        "operationId": "FollowersService_Follow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1FollowRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
+    },
+    "/api/followers/v1/count": {
+      "get": {
+        "operationId": "FollowersService_CountFollowers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CountFollowersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
+    },
+    "/api/followers/v1/follower/{id}": {
+      "delete": {
+        "operationId": "FollowersService_Unfollow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
+    },
+    "/api/followers/v1/followings": {
+      "get": {
+        "operationId": "FollowersService_ListFollowings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListFollowingsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
+    },
+    "/api/followers/v1/followings/count": {
+      "get": {
+        "operationId": "FollowersService_CountFollowings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CountFollowingsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CountFollowersResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1CountFollowingsResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1FollowRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "userToFollowId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Follower": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1IsFollowingResponse": {
+      "type": "object",
+      "properties": {
+        "isFollow": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ListFollowersResponse": {
+      "type": "object",
+      "properties": {
+        "followers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        }
+      }
+    },
+    "v1ListFollowingsResponse": {
+      "type": "object",
+      "properties": {
+        "followings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        }
+      }
+    }
+  }
+}
