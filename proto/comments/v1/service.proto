@@ -3,14 +3,13 @@ syntax = "proto3";
 package comments.v1;
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
 import "google/api/field_behavior.proto";
 
 option go_package = "fivi/gen/go/comments/v1;pb_comments";
 
 service Service {
   // Create a comment.
-  rpc Create(CreateRequest) returns (google.protobuf.Empty) {
+  rpc Create(CreateRequest) returns (CreateResponse) {
      option (google.api.http) = {
        post: "/api/comments/v1"
        body: "*"

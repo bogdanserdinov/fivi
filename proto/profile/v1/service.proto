@@ -27,7 +27,7 @@ service ProfileService {
       body: "*"
     };
   };
-  rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {
+  rpc UpdateProfile(UpdateProfileRequest) returns (Person) {
     option (google.api.http) = {
       put: "/api/profile/v1"
       body: "*"

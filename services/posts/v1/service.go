@@ -82,7 +82,19 @@ func (s *Server) CreatePost(ctx context.Context, request *pb_posts.CreatePostReq
 		}
 	}
 
-	return &pb_posts.CreatePostResponse{}, nil
+	post, err := s.repo.Get(ctx, postID)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not retrieve post")
+	}
+
+	pbPost, err := s.toPbPost(userIDStr, post)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not cast post")
+	}
+
+	return &pb_posts.CreatePostResponse{
+		Post: pbPost,
+	}, nil
 }
 
 func (s *Server) GetPost(ctx context.Context, request *pb_posts.GetPostRequest) (*pb_posts.GetPostResponse, error) {

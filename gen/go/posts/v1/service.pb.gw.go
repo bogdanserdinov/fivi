@@ -397,7 +397,7 @@ func RegisterServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/posts.v1.Service/UpdatePost", runtime.WithHTTPPathPattern("/v1/posts/post/{identifier}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/posts.v1.Service/UpdatePost", runtime.WithHTTPPathPattern("/api/v1/posts/post/{identifier}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -422,7 +422,7 @@ func RegisterServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/posts.v1.Service/DeletePost", runtime.WithHTTPPathPattern("/v1/posts/post/{identifier}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/posts.v1.Service/DeletePost", runtime.WithHTTPPathPattern("/api/v1/posts/post/{identifier}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -577,7 +577,7 @@ func RegisterServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/posts.v1.Service/UpdatePost", runtime.WithHTTPPathPattern("/v1/posts/post/{identifier}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/posts.v1.Service/UpdatePost", runtime.WithHTTPPathPattern("/api/v1/posts/post/{identifier}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -599,7 +599,7 @@ func RegisterServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/posts.v1.Service/DeletePost", runtime.WithHTTPPathPattern("/v1/posts/post/{identifier}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/posts.v1.Service/DeletePost", runtime.WithHTTPPathPattern("/api/v1/posts/post/{identifier}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -647,9 +647,9 @@ var (
 
 	pattern_Service_GetPostsByCreator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "posts", "v1", "creator", "user_id"}, ""))
 
-	pattern_Service_UpdatePost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "posts", "post", "identifier"}, ""))
+	pattern_Service_UpdatePost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "posts", "post", "identifier"}, ""))
 
-	pattern_Service_DeletePost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "posts", "post", "identifier"}, ""))
+	pattern_Service_DeletePost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "posts", "post", "identifier"}, ""))
 
 	pattern_Service_ListPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1}, []string{"api", "posts", "v1"}, ""))
 )

@@ -113,7 +113,7 @@ func (s *Service) Login(ctx context.Context, request *profilepb.LoginRequest) (*
 	}, nil
 }
 
-func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdateProfileRequest) (*emptypb.Empty, error) {
+func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdateProfileRequest) (*profilepb.Person, error) {
 	userID, err := jwt.DIDFromCtx(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
@@ -143,7 +143,9 @@ func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdatePr
 
 	_ = s.CreateAvatar(ctx, id, bytes.NewBuffer(img))
 
-	return &emptypb.Empty{}, nil
+	return s.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
+		UserDid: userID,
+	})
 }
 
 func (s *Service) GetProfileByDID(ctx context.Context, request *profilepb.GetProfileByDIDRequest) (*profilepb.Person, error) {
