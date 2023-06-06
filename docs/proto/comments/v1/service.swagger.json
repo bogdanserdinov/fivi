@@ -126,6 +126,9 @@
         "username": {
           "type": "string"
         },
+        "user_id": {
+          "type": "string"
+        },
         "user_image": {
           "type": "string"
         }
@@ -136,6 +139,7 @@
         "text",
         "post_id",
         "username",
+        "user_id",
         "user_image"
       ]
     },

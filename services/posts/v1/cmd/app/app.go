@@ -5,8 +5,11 @@ import (
 	"database/sql"
 	pb_posts "fivi/gen/go/posts/v1"
 	store2 "fivi/lib/store"
+	comments_client_grpc "fivi/services/comments/v1/client/grpc"
+	likes_client_grpc "fivi/services/likes/v1/client/grpc"
 	"fivi/services/posts/v1"
 	"fivi/services/posts/v1/repository"
+	profile_client_grpc "fivi/services/profile/v1/client/grpc"
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/oklog/run"
@@ -19,9 +22,12 @@ import (
 const defaultGrpcMessageSize = 100 * 1024 * 1024
 
 type Config struct {
-	GrpcServerPort int    `env:"GRPC_SERVER_PORT,notEmpty"`
-	DBConnString   string `env:"DATABASE_URL,notEmpty"`
-	ImagesDir      string `env:"DATABASE_URL,notEmpty"`
+	GrpcServerPort     int    `env:"GRPC_SERVER_PORT,notEmpty"`
+	DBConnString       string `env:"DATABASE_URL,notEmpty"`
+	ImagesDir          string `env:"DATABASE_URL,notEmpty"`
+	ProfileServerAddr  string `env:"DATABASE_URL,notEmpty"`
+	CommentsServerAddr string `env:"DATABASE_URL,notEmpty"`
+	LikesServerAddr    string `env:"DATABASE_URL,notEmpty"`
 }
 
 func (cfg *Config) ToMap() map[string]string {
@@ -83,7 +89,22 @@ func (a *app) Run(ctx context.Context) {
 			OutputPath: a.cfg.ImagesDir,
 		})
 
-		likesServer := v1.New(repository, store)
+		profilesClient, err := profile_client_grpc.NewProfileServiceClient(a.cfg.ProfileServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to profiles server: %v", err)
+		}
+
+		commentsClient, err := comments_client_grpc.NewCommentsServiceClient(a.cfg.CommentsServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to comments server: %v", err)
+		}
+
+		likesClient, err := likes_client_grpc.NewLikesServiceClient(a.cfg.LikesServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to likes server: %v", err)
+		}
+
+		likesServer := v1.New(repository, store, profilesClient, commentsClient, likesClient)
 		if err != nil {
 			log.Fatalf("can't create posts server: %v\n", err)
 		}

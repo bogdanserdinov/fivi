@@ -84,7 +84,7 @@ module.exports = (env, argv) => {
         output: {
             path: path.resolve(__dirname, "dist/"),
             filename: "[name].[hash].js",
-            publicPath: "/",
+            publicPath: "/static/dist/",
         },
         plugins: isProduction ? PRODUCTION_PLUGINS : DEVELOPMENT_PLUGINS,
         devServer: {

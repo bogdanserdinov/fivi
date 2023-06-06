@@ -13,13 +13,14 @@ import (
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO profiles(id, name, username, mnemonic)
-VALUES ($1, $2, $3, $4)
+INSERT INTO profiles(id, name, email, username, mnemonic)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type CreateUserParams struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
+	Email    string    `json:"email"`
 	Username string    `json:"username"`
 	Mnemonic string    `json:"mnemonic"`
 }
@@ -28,6 +29,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 	_, err := q.exec(ctx, q.createUserStmt, createUser,
 		arg.ID,
 		arg.Name,
+		arg.Email,
 		arg.Username,
 		arg.Mnemonic,
 	)
@@ -35,7 +37,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 }
 
 const getByUsername = `-- name: GetByUsername :one
-SELECT id, name, username, mnemonic
+SELECT id, name, email, username, mnemonic
 FROM profiles
 WHERE username = $1
 `
@@ -43,6 +45,7 @@ WHERE username = $1
 type GetByUsernameRow struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
+	Email    string    `json:"email"`
 	Username string    `json:"username"`
 	Mnemonic string    `json:"mnemonic"`
 }
@@ -53,6 +56,7 @@ func (q *Queries) GetByUsername(ctx context.Context, username string) (GetByUser
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Email,
 		&i.Username,
 		&i.Mnemonic,
 	)
@@ -60,7 +64,7 @@ func (q *Queries) GetByUsername(ctx context.Context, username string) (GetByUser
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, username
+SELECT id, name, email, username
 FROM profiles
 WHERE id = $1
 `
@@ -68,18 +72,24 @@ WHERE id = $1
 type GetUserRow struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
+	Email    string    `json:"email"`
 	Username string    `json:"username"`
 }
 
 func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (GetUserRow, error) {
 	row := q.queryRow(ctx, q.getUserStmt, getUser, id)
 	var i GetUserRow
-	err := row.Scan(&i.ID, &i.Name, &i.Username)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Username,
+	)
 	return i, err
 }
 
 const listUserIDsWithName = `-- name: ListUserIDsWithName :many
-SELECT id, name, username
+SELECT id, name, email, username
 FROM profiles
 WHERE username ILIKE $1 || '%'
 `
@@ -87,6 +97,7 @@ WHERE username ILIKE $1 || '%'
 type ListUserIDsWithNameRow struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
+	Email    string    `json:"email"`
 	Username string    `json:"username"`
 }
 
@@ -99,7 +110,12 @@ func (q *Queries) ListUserIDsWithName(ctx context.Context, username sql.NullStri
 	var items []ListUserIDsWithNameRow
 	for rows.Next() {
 		var i ListUserIDsWithNameRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.Username); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Username,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -115,17 +131,23 @@ func (q *Queries) ListUserIDsWithName(ctx context.Context, username sql.NullStri
 
 const updateUser = `-- name: UpdateUser :exec
 UPDATE profiles
-SET name = $1, username = $2
-WHERE id = $3
+SET name = $1, username = $2, email = $3
+WHERE id = $4
 `
 
 type UpdateUserParams struct {
 	Name     string    `json:"name"`
 	Username string    `json:"username"`
+	Email    string    `json:"email"`
 	ID       uuid.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.exec(ctx, q.updateUserStmt, updateUser, arg.Name, arg.Username, arg.ID)
+	_, err := q.exec(ctx, q.updateUserStmt, updateUser,
+		arg.Name,
+		arg.Username,
+		arg.Email,
+		arg.ID,
+	)
 	return err
 }

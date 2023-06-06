@@ -4,6 +4,7 @@ package profile.v1;
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
+import "followers/v1/service.proto";
 
 option go_package = "fivi/gen/go/profile/v1;profilepb";
 
@@ -72,13 +73,15 @@ message LoginResponse {
 message CreateProfileRequest {
   string name                        = 1; // Name.
   string username                    = 2; // User name.
-  string image = 3;
+  string email                    = 3; // User email.
+  string image = 4;
 };
 
 message UpdateProfileRequest {
   string name                        = 1; // Name.
   string username                    = 2; // User name.
-  string image = 3;
+  string email                    = 3; // User email.
+  string image = 4;
 };
 
 message GetProfileByDIDRequest {
@@ -102,10 +105,13 @@ message GetProfileByEmailRequest {
 }
 
 message Person {
-  // Standard fields
   string id = 1;
-  string name                        = 2; // Name.
+  string email                        = 2; // Email.
   string username                    = 3; // User name.
+  int64 num_of_posts = 4;
+  repeated followers.v1.Follower subscribers = 5;
+  repeated followers.v1.Follower subscriptions = 6;
+  bool is_avatar_exists = 7;
 };
 
 message SearchDIDsByUsernameRequest {

@@ -5,6 +5,8 @@ import (
 	"context"
 	"database/sql"
 	"encoding/base64"
+	pb_followers "fivi/gen/go/followers/v1"
+	pb_posts "fivi/gen/go/posts/v1"
 	profilepb "fivi/gen/go/profile/v1"
 	"fivi/lib/jwt"
 	"fivi/lib/store"
@@ -29,15 +31,19 @@ type (
 
 		repo *repository2.Queries
 
-		store *store.Store
+		store     *store.Store
+		posts     pb_posts.ServiceClient
+		followers pb_followers.FollowersServiceClient
 	}
 )
 
-func New(jwt *jwt.JWT, repo *repository2.Queries, store *store.Store) *Service {
+func New(jwt *jwt.JWT, repo *repository2.Queries, store *store.Store, posts pb_posts.ServiceClient, followers pb_followers.FollowersServiceClient) *Service {
 	return &Service{
-		repo:  repo,
-		jwt:   jwt,
-		store: store,
+		repo:      repo,
+		jwt:       jwt,
+		store:     store,
+		posts:     posts,
+		followers: followers,
 	}
 }
 
@@ -67,6 +73,7 @@ func (s *Service) Register(ctx context.Context, request *profilepb.RegisterReque
 	err := s.repo.CreateUser(ctx, repository2.CreateUserParams{
 		ID:       userID,
 		Name:     request.GetFullName(),
+		Email:    request.GetEmail(),
 		Username: request.GetName(),
 		Mnemonic: strings.Join(request.GetMnemonic(), " "),
 	})
@@ -120,6 +127,7 @@ func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdatePr
 	err = s.repo.UpdateUser(ctx, repository2.UpdateUserParams{
 		ID:       id,
 		Name:     request.GetName(),
+		Email:    request.GetEmail(),
 		Username: request.GetUsername(),
 	})
 	if err != nil {
@@ -154,10 +162,37 @@ func (s *Service) GetProfileByDID(ctx context.Context, request *emptypb.Empty) (
 		return nil, errors.Wrap(err, "could not retrieve user")
 	}
 
+	followers, err := s.followers.ListFollowers(ctx, &pb_followers.ListFollowersRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "could not list followers")
+	}
+
+	followings, err := s.followers.ListFollowings(ctx, &pb_followers.ListFollowingsRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "could not list followings")
+	}
+
+	posts, err := s.posts.GetPostsByCreator(ctx, &pb_posts.GetPostsByCreatorRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "could not list posts")
+	}
+
+	relatedPath := filepath.Join("users", user.ID.String()+".png")
+
 	return &profilepb.Person{
-		Id:       id.String(),
-		Name:     user.Name,
-		Username: user.Username,
+		Id:             id.String(),
+		Email:          user.Email,
+		Username:       user.Username,
+		NumOfPosts:     int64(len(posts.GetPosts())),
+		Subscribers:    followers.GetFollowers(),
+		Subscriptions:  followings.GetFollowings(),
+		IsAvatarExists: s.store.Stat(ctx, relatedPath),
 	}, nil
 }
 
@@ -172,10 +207,12 @@ func (s *Service) GetProfileByDIDNoAuth(ctx context.Context, request *profilepb.
 		return nil, errors.Wrap(err, "could not retrieve user")
 	}
 
+	relatedPath := filepath.Join("users", user.ID.String()+".png")
 	return &profilepb.Person{
-		Id:       id.String(),
-		Name:     user.Name,
-		Username: user.Username,
+		Id:             id.String(),
+		Email:          user.Email,
+		Username:       user.Username,
+		IsAvatarExists: s.store.Stat(ctx, relatedPath),
 	}, nil
 }
 
@@ -190,10 +227,34 @@ func (s *Service) SearchDIDsByUsername(ctx context.Context, request *profilepb.S
 
 	pbProfiles := make([]*profilepb.Person, 0, len(users))
 	for _, user := range users {
+		followers, err := s.followers.ListFollowers(ctx, &pb_followers.ListFollowersRequest{
+			UserId: user.ID.String(),
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "could not list followers")
+		}
+
+		followings, err := s.followers.ListFollowings(ctx, &pb_followers.ListFollowingsRequest{
+			UserId: user.ID.String(),
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "could not list followings")
+		}
+
+		posts, err := s.posts.GetPostsByCreator(ctx, &pb_posts.GetPostsByCreatorRequest{
+			UserId: user.ID.String(),
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "could not list posts")
+		}
+
 		pbProfile := &profilepb.Person{
-			Id:       user.ID.String(),
-			Name:     user.Name,
-			Username: user.Username,
+			Id:            user.ID.String(),
+			Email:         user.Email,
+			Username:      user.Username,
+			NumOfPosts:    int64(len(posts.GetPosts())),
+			Subscribers:   followers.GetFollowers(),
+			Subscriptions: followings.GetFollowings(),
 		}
 
 		pbProfiles = append(pbProfiles, pbProfile)

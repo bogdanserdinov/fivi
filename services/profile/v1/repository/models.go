@@ -14,6 +14,7 @@ type Profile struct {
 	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	Username  string    `json:"username"`
+	Email     string    `json:"email"`
 	Mnemonic  string    `json:"mnemonic"`
 	CreatedAt time.Time `json:"created_at"`
 }

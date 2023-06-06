@@ -5,6 +5,8 @@ package posts.v1;
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
+import "comments/v1/service.proto";
+import "profile/v1/service.proto";
 
 option go_package = "fivi/gen/go/posts/v1;pb_posts";
 
@@ -61,6 +63,10 @@ message Post {
   repeated string images = 5 [json_name = "images", (google.api.field_behavior) = OPTIONAL];
   int32 num_of_images = 6 [json_name = "num_of_images", (google.api.field_behavior) = OPTIONAL];
   int32 num_of_likes = 7 [json_name = "num_of_likes", (google.api.field_behavior) = OPTIONAL];
+  int32 num_of_comments = 8 [json_name = "num_of_comments", (google.api.field_behavior) = OPTIONAL];
+  repeated comments.v1.Comment comments = 9 [json_name = "comments", (google.api.field_behavior) = OPTIONAL];
+  bool is_liked = 10 [json_name = "is_liked", (google.api.field_behavior) = OPTIONAL];
+  profile.v1.Person creator_profile = 11 [json_name = "creator_profile", (google.api.field_behavior) = OPTIONAL];
 };
 
 // Request for CreatePost.

@@ -30,6 +30,20 @@ service Service {
             get: "/api/likes/v1/post/{post_id}"
         };
     };
+
+    rpc IsLiked(IsLikedRequest) returns (IsLikedResponse) {
+        option (google.api.http) = {
+            get: "/api/likes/v1/post/is_liked"
+        };
+    }
+}
+
+message IsLikedRequest {
+    Like like = 1;
+}
+
+message IsLikedResponse {
+    bool is_liked = 1;
 }
 
 // Represents a like object.

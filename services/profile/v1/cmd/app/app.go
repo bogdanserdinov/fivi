@@ -5,6 +5,9 @@ import (
 	"database/sql"
 	"encoding/base64"
 	pb_profile "fivi/gen/go/profile/v1"
+	followers_client_grpc "fivi/services/followers/v1/client/grpc"
+	posts_client_grpc "fivi/services/posts/v1/client/grpc"
+
 	"fivi/lib/jwt"
 	store2 "fivi/lib/store"
 	"fivi/services/profile/v1"
@@ -22,9 +25,11 @@ import (
 const defaultGrpcMessageSize = 100 * 1024 * 1024
 
 type Config struct {
-	GrpcServerPort int    `env:"GRPC_SERVER_PORT,notEmpty"`
-	DBConnString   string `env:"DATABASE_URL,notEmpty"`
-	ImagesDir      string `env:"DATABASE_URL,notEmpty"`
+	GrpcServerPort      int    `env:"GRPC_SERVER_PORT,notEmpty"`
+	DBConnString        string `env:"DATABASE_URL,notEmpty"`
+	ImagesDir           string `env:"DATABASE_URL,notEmpty"`
+	PostsServerAddr     string
+	FollowersServerAddr string
 }
 
 func (cfg *Config) ToMap() map[string]string {
@@ -92,7 +97,17 @@ func (a *app) Run(ctx context.Context) {
 			OutputPath: a.cfg.ImagesDir,
 		})
 
-		likesServer := v1.New(ji, repository, store)
+		followersClient, err := followers_client_grpc.NewFollowersServiceClient(a.cfg.FollowersServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to followers server: %v", err)
+		}
+
+		postsClient, err := posts_client_grpc.NewPostsServiceClient(a.cfg.PostsServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to posts server: %v", err)
+		}
+
+		likesServer := v1.New(ji, repository, store, postsClient, followersClient)
 		if err != nil {
 			log.Fatalf("can't create posts server: %v\n", err)
 		}

@@ -31,7 +31,8 @@ message Comment {
   string text                                    = 2 [json_name = "text", (google.api.field_behavior) = REQUIRED];
   string post_id = 3 [json_name = "post_id", (google.api.field_behavior) = REQUIRED];
   string username = 4 [json_name = "username", (google.api.field_behavior) = REQUIRED];
-  string user_image = 5 [json_name = "user_image", (google.api.field_behavior) = REQUIRED];
+  string user_id = 5 [json_name = "user_id", (google.api.field_behavior) = REQUIRED];
+  string user_image = 6 [json_name = "user_image", (google.api.field_behavior) = REQUIRED];
 };
 
 // Request for Create method.

@@ -76,6 +76,7 @@ func (s *Service) GetByID(ctx context.Context, request *pb_comments.GetByIDReque
 			Text:       comment.Text,
 			PostId:     postID.String(),
 			Username:   usernameResp.GetUsername(),
+			UserId:     usernameResp.GetId(),
 		}
 
 		pbComments = append(pbComments, pbComment)
