@@ -8,6 +8,7 @@ import (
 	repository2 "fivi/services/likes/v1/repository"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -38,15 +39,27 @@ func (s *Service) Like(ctx context.Context, request *pb_likes.LikeRequest) (*emp
 		return nil, status.Error(codes.InvalidArgument, "invalid postID")
 	}
 
-	err = s.repo.DeleteLike(ctx, repository2.DeleteLikeParams{
-		PostID: postID,
-		UserID: did,
+	log.Println("LIKEEEEDD", err)
+
+	isLiked, err := s.IsLiked(ctx, &pb_likes.IsLikedRequest{
+		Like: &pb_likes.Like{
+			Id:     did,
+			PostId: postID.String(),
+		},
 	})
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, status.Error(codes.Internal, "could not delete like")
+	if err != nil {
+		return nil, errors.Wrap(err, "could not check is liked")
 	}
 
-	if errors.Is(err, sql.ErrNoRows) {
+	if isLiked.GetIsLiked() {
+		err = s.repo.DeleteLike(ctx, repository2.DeleteLikeParams{
+			PostID: postID,
+			UserID: did,
+		})
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.Internal, "could not delete like")
+		}
+	} else {
 		err = s.repo.Like(ctx, repository2.LikeParams{
 			PostID: postID,
 			UserID: did,
@@ -95,5 +108,25 @@ func (s *Service) GetLikes(ctx context.Context, request *pb_likes.GetListByPostR
 
 	return &pb_likes.GetLikesByPostResponse{
 		Likes: pbLikes,
+	}, nil
+}
+
+func (s *Service) IsLiked(ctx context.Context, request *pb_likes.IsLikedRequest) (*pb_likes.IsLikedResponse, error) {
+	postID, err := uuid.Parse(request.GetLike().GetPostId())
+	if err != nil {
+		return nil, errors.Wrap(err, "invalid post id")
+	}
+
+	isLiked, err := s.repo.IsLiked(ctx, repository2.IsLikedParams{
+		PostID: postID,
+		UserID: request.GetLike().GetId(),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get is_liked value")
+	}
+	log.Println("isLiked", isLiked)
+
+	return &pb_likes.IsLikedResponse{
+		IsLiked: isLiked,
 	}, nil
 }

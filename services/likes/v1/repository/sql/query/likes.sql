@@ -15,3 +15,8 @@ WHERE post_id = @post_id;
 SELECT COUNT(*)
 FROM likes
 WHERE post_id = @post_id;
+
+-- name: IsLiked :one
+SELECT EXISTS(
+    SELECT * FROM likes WHERE post_id = @post_id AND user_id = @user_id
+);

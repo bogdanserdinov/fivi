@@ -39,6 +39,24 @@ func (q *Queries) DeleteLike(ctx context.Context, arg DeleteLikeParams) error {
 	return err
 }
 
+const isLiked = `-- name: IsLiked :one
+SELECT EXISTS(
+    SELECT post_id, user_id FROM likes WHERE post_id = $1 AND user_id = $2
+)
+`
+
+type IsLikedParams struct {
+	PostID uuid.UUID `json:"post_id"`
+	UserID string    `json:"user_id"`
+}
+
+func (q *Queries) IsLiked(ctx context.Context, arg IsLikedParams) (bool, error) {
+	row := q.queryRow(ctx, q.isLikedStmt, isLiked, arg.PostID, arg.UserID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const like = `-- name: Like :exec
 INSERT INTO likes(post_id, user_id)
 VALUES($1, $2)

@@ -23,6 +23,7 @@ const (
 	Service_Like_FullMethodName             = "/likes.v1.Service/Like"
 	Service_GetNumberOfLikes_FullMethodName = "/likes.v1.Service/GetNumberOfLikes"
 	Service_GetLikes_FullMethodName         = "/likes.v1.Service/GetLikes"
+	Service_IsLiked_FullMethodName          = "/likes.v1.Service/IsLiked"
 )
 
 // ServiceClient is the client API for Service service.
@@ -35,6 +36,7 @@ type ServiceClient interface {
 	GetNumberOfLikes(ctx context.Context, in *CountPostLikesRequest, opts ...grpc.CallOption) (*CountPostResponse, error)
 	// Returns list of likes by relation type and id.
 	GetLikes(ctx context.Context, in *GetListByPostRequest, opts ...grpc.CallOption) (*GetLikesByPostResponse, error)
+	IsLiked(ctx context.Context, in *IsLikedRequest, opts ...grpc.CallOption) (*IsLikedResponse, error)
 }
 
 type serviceClient struct {
@@ -72,6 +74,15 @@ func (c *serviceClient) GetLikes(ctx context.Context, in *GetListByPostRequest, 
 	return out, nil
 }
 
+func (c *serviceClient) IsLiked(ctx context.Context, in *IsLikedRequest, opts ...grpc.CallOption) (*IsLikedResponse, error) {
+	out := new(IsLikedResponse)
+	err := c.cc.Invoke(ctx, Service_IsLiked_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceServer is the server API for Service service.
 // All implementations should embed UnimplementedServiceServer
 // for forward compatibility
@@ -82,6 +93,7 @@ type ServiceServer interface {
 	GetNumberOfLikes(context.Context, *CountPostLikesRequest) (*CountPostResponse, error)
 	// Returns list of likes by relation type and id.
 	GetLikes(context.Context, *GetListByPostRequest) (*GetLikesByPostResponse, error)
+	IsLiked(context.Context, *IsLikedRequest) (*IsLikedResponse, error)
 }
 
 // UnimplementedServiceServer should be embedded to have forward compatible implementations.
@@ -96,6 +108,9 @@ func (UnimplementedServiceServer) GetNumberOfLikes(context.Context, *CountPostLi
 }
 func (UnimplementedServiceServer) GetLikes(context.Context, *GetListByPostRequest) (*GetLikesByPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLikes not implemented")
+}
+func (UnimplementedServiceServer) IsLiked(context.Context, *IsLikedRequest) (*IsLikedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsLiked not implemented")
 }
 
 // UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -163,6 +178,24 @@ func _Service_GetLikes_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Service_IsLiked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsLikedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).IsLiked(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Service_IsLiked_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).IsLiked(ctx, req.(*IsLikedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -181,6 +214,10 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLikes",
 			Handler:    _Service_GetLikes_Handler,
+		},
+		{
+			MethodName: "IsLiked",
+			Handler:    _Service_IsLiked_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

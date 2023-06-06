@@ -51,6 +51,42 @@
         ]
       }
     },
+    "/api/likes/v1/post/is_liked": {
+      "get": {
+        "operationId": "Service_IsLiked",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1IsLikedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "like.id",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "like.post_id",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
     "/api/likes/v1/post/{post_id}": {
       "get": {
         "summary": "Returns list of likes by relation type and id.",
@@ -166,6 +202,14 @@
         }
       },
       "description": "Represents a GetLikesByRelationIDResponse object."
+    },
+    "v1IsLikedResponse": {
+      "type": "object",
+      "properties": {
+        "isLiked": {
+          "type": "boolean"
+        }
+      }
     },
     "v1Like": {
       "type": "object",

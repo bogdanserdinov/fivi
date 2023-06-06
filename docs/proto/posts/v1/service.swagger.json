@@ -242,6 +242,38 @@
         }
       }
     },
+    "v1Comment": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "post_id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "user_image": {
+          "type": "string"
+        }
+      },
+      "description": "Represents an comment object.",
+      "required": [
+        "identifier",
+        "text",
+        "post_id",
+        "username",
+        "user_id",
+        "user_image"
+      ]
+    },
     "v1CreatePostRequest": {
       "type": "object",
       "properties": {
@@ -260,6 +292,17 @@
     "v1CreatePostResponse": {
       "type": "object",
       "description": "Response for CreatePost."
+    },
+    "v1Follower": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "v1GetPostResponse": {
       "type": "object",
@@ -293,6 +336,41 @@
         }
       }
     },
+    "v1Person": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email."
+        },
+        "username": {
+          "type": "string",
+          "description": "User name."
+        },
+        "numOfPosts": {
+          "type": "string",
+          "format": "int64"
+        },
+        "subscribers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        },
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        },
+        "isAvatarExists": {
+          "type": "boolean"
+        }
+      }
+    },
     "v1Post": {
       "type": "object",
       "properties": {
@@ -321,6 +399,22 @@
         "num_of_likes": {
           "type": "integer",
           "format": "int32"
+        },
+        "num_of_comments": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Comment"
+          }
+        },
+        "is_liked": {
+          "type": "boolean"
+        },
+        "creator_profile": {
+          "$ref": "#/definitions/v1Person"
         }
       },
       "description": "Represents a post.",

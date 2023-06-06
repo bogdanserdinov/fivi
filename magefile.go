@@ -610,10 +610,17 @@ var (
 	DBConnString = "postgresql://postgres:123456@localhost/db_name_db?sslmode=disable"
 	ImagesDir    = "/Users/bogdanserdinov/work/fivi/assets"
 
+	likesCfg = likes_cmd.Config{
+		GrpcServerPort: 9094,
+		DBConnString:   "postgresql://postgres:123456@localhost/likes_db?sslmode=disable",
+	}
+
 	profileCfg = profile_cmd.Config{
-		GrpcServerPort: 9090,
-		DBConnString:   "postgresql://postgres:123456@localhost/profile_db?sslmode=disable",
-		ImagesDir:      ImagesDir,
+		GrpcServerPort:      9090,
+		DBConnString:        "postgresql://postgres:123456@localhost/profile_db?sslmode=disable",
+		ImagesDir:           ImagesDir,
+		PostsServerAddr:     "0.0.0.0:9092",
+		FollowersServerAddr: "0.0.0.0:9093",
 	}
 
 	commentsCfg = comments_cmd.Config{
@@ -628,15 +635,13 @@ var (
 		DBConnString:      "postgresql://postgres:123456@localhost/followers_db?sslmode=disable",
 	}
 
-	likesCfg = likes_cmd.Config{
-		GrpcServerPort: 9094,
-		DBConnString:   "postgresql://postgres:123456@localhost/likes_db?sslmode=disable",
-	}
-
 	postsCfg = posts_cmd.Config{
-		GrpcServerPort: 9092,
-		DBConnString:   "postgresql://postgres:123456@localhost/posts_db?sslmode=disable",
-		ImagesDir:      ImagesDir,
+		GrpcServerPort:     9092,
+		DBConnString:       "postgresql://postgres:123456@localhost/posts_db?sslmode=disable",
+		ImagesDir:          ImagesDir,
+		ProfileServerAddr:  "0.0.0.0:9090",
+		CommentsServerAddr: "0.0.0.0:9091",
+		LikesServerAddr:    "0.0.0.0:9094",
 	}
 
 	gatewayCfg = gateway_cmd.Config{

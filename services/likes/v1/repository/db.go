@@ -30,6 +30,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteLikeStmt, err = db.PrepareContext(ctx, deleteLike); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteLike: %w", err)
 	}
+	if q.isLikedStmt, err = db.PrepareContext(ctx, isLiked); err != nil {
+		return nil, fmt.Errorf("error preparing query IsLiked: %w", err)
+	}
 	if q.likeStmt, err = db.PrepareContext(ctx, like); err != nil {
 		return nil, fmt.Errorf("error preparing query Like: %w", err)
 	}
@@ -49,6 +52,11 @@ func (q *Queries) Close() error {
 	if q.deleteLikeStmt != nil {
 		if cerr := q.deleteLikeStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteLikeStmt: %w", cerr)
+		}
+	}
+	if q.isLikedStmt != nil {
+		if cerr := q.isLikedStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing isLikedStmt: %w", cerr)
 		}
 	}
 	if q.likeStmt != nil {
@@ -98,10 +106,11 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db DBTX
-	tx *sql.Tx
+	db                 DBTX
+	tx                 *sql.Tx
 	countPostLikesStmt *sql.Stmt
 	deleteLikeStmt     *sql.Stmt
+	isLikedStmt        *sql.Stmt
 	likeStmt           *sql.Stmt
 	listLikesStmt      *sql.Stmt
 }
@@ -112,6 +121,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		tx:                 tx,
 		countPostLikesStmt: q.countPostLikesStmt,
 		deleteLikeStmt:     q.deleteLikeStmt,
+		isLikedStmt:        q.isLikedStmt,
 		likeStmt:           q.likeStmt,
 		listLikesStmt:      q.listLikesStmt,
 	}

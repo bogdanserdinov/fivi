@@ -225,6 +225,17 @@
         }
       }
     },
+    "v1Follower": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "v1GenerateMnemonicResponse": {
       "type": "object",
       "properties": {
@@ -262,16 +273,34 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "title": "Standard fields"
+          "type": "string"
         },
-        "name": {
+        "email": {
           "type": "string",
-          "description": "Name."
+          "description": "Email."
         },
         "username": {
           "type": "string",
           "description": "User name."
+        },
+        "numOfPosts": {
+          "type": "string",
+          "format": "int64"
+        },
+        "subscribers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        },
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Follower"
+          }
+        },
+        "isAvatarExists": {
+          "type": "boolean"
         }
       }
     },
@@ -324,6 +353,10 @@
         "username": {
           "type": "string",
           "description": "User name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User email."
         },
         "image": {
           "type": "string"
