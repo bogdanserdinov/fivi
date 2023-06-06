@@ -37,7 +37,7 @@ type ProfileServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetProfileByDID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Person, error)
+	GetProfileByDID(ctx context.Context, in *GetProfileByDIDRequest, opts ...grpc.CallOption) (*Person, error)
 	GetProfileByDIDNoAuth(ctx context.Context, in *GetProfileByDIDRequest, opts ...grpc.CallOption) (*Person, error)
 	SearchDIDsByUsername(ctx context.Context, in *SearchDIDsByUsernameRequest, opts ...grpc.CallOption) (*SearchDIDsByUsernameResponse, error)
 }
@@ -86,7 +86,7 @@ func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *UpdateProf
 	return out, nil
 }
 
-func (c *profileServiceClient) GetProfileByDID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Person, error) {
+func (c *profileServiceClient) GetProfileByDID(ctx context.Context, in *GetProfileByDIDRequest, opts ...grpc.CallOption) (*Person, error) {
 	out := new(Person)
 	err := c.cc.Invoke(ctx, ProfileService_GetProfileByDID_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -121,7 +121,7 @@ type ProfileServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error)
-	GetProfileByDID(context.Context, *emptypb.Empty) (*Person, error)
+	GetProfileByDID(context.Context, *GetProfileByDIDRequest) (*Person, error)
 	GetProfileByDIDNoAuth(context.Context, *GetProfileByDIDRequest) (*Person, error)
 	SearchDIDsByUsername(context.Context, *SearchDIDsByUsernameRequest) (*SearchDIDsByUsernameResponse, error)
 }
@@ -142,7 +142,7 @@ func (UnimplementedProfileServiceServer) Login(context.Context, *LoginRequest) (
 func (UnimplementedProfileServiceServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
-func (UnimplementedProfileServiceServer) GetProfileByDID(context.Context, *emptypb.Empty) (*Person, error) {
+func (UnimplementedProfileServiceServer) GetProfileByDID(context.Context, *GetProfileByDIDRequest) (*Person, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileByDID not implemented")
 }
 func (UnimplementedProfileServiceServer) GetProfileByDIDNoAuth(context.Context, *GetProfileByDIDRequest) (*Person, error) {
@@ -236,7 +236,7 @@ func _ProfileService_UpdateProfile_Handler(srv interface{}, ctx context.Context,
 }
 
 func _ProfileService_GetProfileByDID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetProfileByDIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -248,7 +248,7 @@ func _ProfileService_GetProfileByDID_Handler(srv interface{}, ctx context.Contex
 		FullMethod: ProfileService_GetProfileByDID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProfileServiceServer).GetProfileByDID(ctx, req.(*emptypb.Empty))
+		return srv.(ProfileServiceServer).GetProfileByDID(ctx, req.(*GetProfileByDIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -146,10 +146,17 @@ func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdatePr
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Service) GetProfileByDID(ctx context.Context, request *emptypb.Empty) (*profilepb.Person, error) {
-	userID, err := jwt.DIDFromCtx(ctx)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+func (s *Service) GetProfileByDID(ctx context.Context, request *profilepb.GetProfileByDIDRequest) (*profilepb.Person, error) {
+	var userID string
+
+	if request.GetUserDid() == "" {
+		var err error
+		userID, err = jwt.DIDFromCtx(ctx)
+		if err != nil {
+			return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+		}
+	} else {
+		userID = request.GetUserDid()
 	}
 
 	id, err := uuid.Parse(userID)

@@ -130,6 +130,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "userDid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "ProfileService"
         ]
