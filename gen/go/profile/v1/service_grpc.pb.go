@@ -36,7 +36,7 @@ type ProfileServiceClient interface {
 	GenerateMnemonic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GenerateMnemonicResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*Person, error)
 	GetProfileByDID(ctx context.Context, in *GetProfileByDIDRequest, opts ...grpc.CallOption) (*Person, error)
 	GetProfileByDIDNoAuth(ctx context.Context, in *GetProfileByDIDRequest, opts ...grpc.CallOption) (*Person, error)
 	SearchDIDsByUsername(ctx context.Context, in *SearchDIDsByUsernameRequest, opts ...grpc.CallOption) (*SearchDIDsByUsernameResponse, error)
@@ -77,8 +77,8 @@ func (c *profileServiceClient) Login(ctx context.Context, in *LoginRequest, opts
 	return out, nil
 }
 
-func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*Person, error) {
+	out := new(Person)
 	err := c.cc.Invoke(ctx, ProfileService_UpdateProfile_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ type ProfileServiceServer interface {
 	GenerateMnemonic(context.Context, *emptypb.Empty) (*GenerateMnemonicResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error)
+	UpdateProfile(context.Context, *UpdateProfileRequest) (*Person, error)
 	GetProfileByDID(context.Context, *GetProfileByDIDRequest) (*Person, error)
 	GetProfileByDIDNoAuth(context.Context, *GetProfileByDIDRequest) (*Person, error)
 	SearchDIDsByUsername(context.Context, *SearchDIDsByUsernameRequest) (*SearchDIDsByUsernameResponse, error)
@@ -139,7 +139,7 @@ func (UnimplementedProfileServiceServer) Register(context.Context, *RegisterRequ
 func (UnimplementedProfileServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedProfileServiceServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*emptypb.Empty, error) {
+func (UnimplementedProfileServiceServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*Person, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
 func (UnimplementedProfileServiceServer) GetProfileByDID(context.Context, *GetProfileByDIDRequest) (*Person, error) {

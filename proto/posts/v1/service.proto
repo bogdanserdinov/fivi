@@ -35,7 +35,7 @@ service Service {
   // Update a post.
   rpc UpdatePost(UpdatePostRequest) returns (google.protobuf.Empty) {
      option (google.api.http) = {
-       put: "/v1/posts/post/{identifier}"
+       put: "/api/v1/posts/post/{identifier}"
        body: "*"
      };
   };
@@ -43,7 +43,7 @@ service Service {
   // Delete a post.
   rpc DeletePost(DeletePostRequest) returns (google.protobuf.Empty) {
      option (google.api.http) = {
-       delete: "/v1/posts/post/{identifier}"
+       delete: "/api/v1/posts/post/{identifier}"
      };
   };
 
@@ -76,7 +76,9 @@ message CreatePostRequest {
 };
 
 // Response for CreatePost.
-message CreatePostResponse {};
+message CreatePostResponse {
+  Post post = 1 [json_name = "post"];
+};
 
 // Request for GetPost.
 message GetPostRequest {

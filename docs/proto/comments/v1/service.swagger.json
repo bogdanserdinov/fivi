@@ -24,8 +24,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/definitions/v1CreateResponse"
             }
           },
           "default": {
@@ -154,6 +153,15 @@
         }
       },
       "description": "Request for Create method."
+    },
+    "v1CreateResponse": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1Comment"
+        }
+      },
+      "description": "Represents a CreateResponse object."
     },
     "v1GetByIDResponse": {
       "type": "object",

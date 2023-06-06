@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var _ pb_comments.ServiceServer = (*Service)(nil)
@@ -29,10 +28,10 @@ func New(repo *repository2.Queries, profiles profilepb.ProfileServiceClient) *Se
 	}
 }
 
-func (s *Service) Create(ctx context.Context, request *pb_comments.CreateRequest) (*emptypb.Empty, error) {
+func (s *Service) Create(ctx context.Context, request *pb_comments.CreateRequest) (*pb_comments.CreateResponse, error) {
 	did, err := jwt.DIDFromCtx(ctx)
 	if err != nil {
-		return &emptypb.Empty{}, status.Error(codes.Unauthenticated, "unauthenticated")
+		return nil, status.Error(codes.Unauthenticated, "unauthenticated")
 	}
 
 	postID, err := uuid.Parse(request.GetPostId())
@@ -40,14 +39,33 @@ func (s *Service) Create(ctx context.Context, request *pb_comments.CreateRequest
 		return nil, status.Error(codes.InvalidArgument, "invalid postID")
 	}
 
+	commentID := uuid.New()
+
 	err = s.repo.Create(ctx, repository2.CreateParams{
-		ID:        uuid.New(),
+		ID:        commentID,
 		Text:      request.Text,
 		PostID:    postID,
 		CreatorID: did,
 	})
 
-	return &emptypb.Empty{}, err
+	usernameResp, err := s.profiles.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
+		UserDid: did,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	pbComment := &pb_comments.Comment{
+		Identifier: commentID.String(),
+		Text:       request.Text,
+		PostId:     postID.String(),
+		Username:   usernameResp.GetUsername(),
+		UserId:     usernameResp.GetId(),
+	}
+
+	return &pb_comments.CreateResponse{
+		Comment: pbComment,
+	}, err
 }
 
 func (s *Service) GetByID(ctx context.Context, request *pb_comments.GetByIDRequest) (*pb_comments.GetByIDResponse, error) {
