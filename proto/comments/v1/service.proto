@@ -32,6 +32,7 @@ message Comment {
   string username = 4 [json_name = "username", (google.api.field_behavior) = REQUIRED];
   string user_id = 5 [json_name = "user_id", (google.api.field_behavior) = REQUIRED];
   string user_image = 6 [json_name = "user_image", (google.api.field_behavior) = REQUIRED];
+  bool is_avatar_exists = 7 [json_name = "is_avatar_exists", (google.api.field_behavior) = REQUIRED];;
 };
 
 // Request for Create method.
