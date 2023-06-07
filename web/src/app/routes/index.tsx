@@ -3,6 +3,7 @@ import { Footer } from '@components/common/Footer';
 import { lazy, useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { UserEdit } from '@components/User/Edit';
+import { getLocalStorageItem } from '../utils/localStorage';
 
 const Home = lazy(() => import('@/app/views/Home'));
 const Registration = lazy(() => import('@/app/views/Auth/Registration'));
@@ -93,21 +94,19 @@ export const Switch = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const isLoggedin = true;
+    const isAuthToken = getLocalStorageItem('AUTH_TOKEN');
 
     useEffect(() => {
-        if (!isLoggedin && location.pathname !== AuthRoutesConfig.Login.path) {
+        if (!isAuthToken && location.pathname !== AuthRoutesConfig.Login.path) {
             navigate(AuthRoutesConfig.Registration.path);
-        } else if (!isLoggedin && location.pathname === AuthRoutesConfig.Login.path) {
+        } else if (!isAuthToken && location.pathname === AuthRoutesConfig.Login.path) {
             navigate(AuthRoutesConfig.Login.path);
-        } else {
-            navigate(RoutesConfig.Home.path);
         }
     }, []);
 
     return (
         <>
-            {!isLoggedin ?
+            {!isAuthToken ?
                 <Routes>
                     {AuthRoutesConfig.routes.map(
                         (route: ComponentRoutes, index: number) =>

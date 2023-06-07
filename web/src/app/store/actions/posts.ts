@@ -9,16 +9,19 @@ import { setErrorMessage } from '@/app/store/reducers/error';
 
 import { PostsClient } from '@/api/posts';
 import { PostsService } from '@/post/service';
-import { PostAddData, PostUpdateData } from '@/post';
+import { CommentCreate, PostAddData, PostLikedAction, PostUpdateData } from '@/post';
 import { postsSlice } from '@/app/store/reducers/posts';
 
 const postsClient = new PostsClient();
 export const postsService = new PostsService(postsClient);
 
+
 export const createPost = createAsyncThunk(
     '/post/create',
     async function(post: PostAddData) {
-        await postsService.createPost(post);
+        const postData = await postsService.createPost(post);
+
+        return postData;
     }
 );
 
@@ -50,6 +53,7 @@ export const getPost = createAsyncThunk(
 export const getPostsHomePage = () => async function(dispatch: Dispatch) {
     try {
         const posts = await postsService.getPostsHomePage();
+        console.log(posts);
         dispatch(postsSlice.actions.setPostsHomePage(posts));
     } catch (error: any) {
         if (error instanceof BadRequestError) {
@@ -64,5 +68,23 @@ export const getPostsProfile = createAsyncThunk(
         const response = await postsService.getPostsProfile(userId);
 
         return response;
+    }
+);
+
+export const sendComment = createAsyncThunk(
+    '/comment',
+    async(comment: CommentCreate) => {
+        const commentData = await postsService.sendComment(comment);
+
+        return commentData;
+    }
+);
+
+export const likeAndDislikePost = createAsyncThunk(
+    '/likeAndDislike/post',
+    async function(likedPostActionData: PostLikedAction) {
+        await postsService.likeAndDislike(likedPostActionData.postId);
+
+        return { post_id: likedPostActionData.postId, isLiked: likedPostActionData.isLiked };
     }
 );

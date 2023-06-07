@@ -1,37 +1,39 @@
 import { useState } from 'react';
 
+import { PostModal } from '@components/Post/Modal';
+import { Post } from '@/post';
+
 import favoriteIcon from '@static/img/User/Post/favoriteIcon.png';
 import commentIcon from '@static/img/User/Post/commentIcon.png';
 import galleryIcon from '@static/img/User/Post/galleryIcon.png';
 
-import { PostModal } from '@components/Post/Modal';
 
 import './index.scss';
 
 const ONE_PHOTO = 1;
 const FIRST_PHOTO = 0;
 
-export const UserPost: React.FC<{ post: any }> = ({ post }) => {
+export const UserPost: React.FC<{ post: Post }> = ({ post }) => {
     const [isOpenModal, setIsOpenModal] = useState(false);
 
     return (
         <>
             <div className="user-post" onClick={() => setIsOpenModal(true)}>
-                {post.photos.length > ONE_PHOTO &&
+                {post.num_of_images > ONE_PHOTO &&
                     <img
                         src={galleryIcon}
                         alt="post"
                         className="user-post__lots-photos-icon"
                     />
                 }
-                <img src={post.photos[FIRST_PHOTO]} alt="post" className="user-post__image" />
+                <img src={`${window.location.origin}/images/posts/${post.postId}/0.png`} alt="post" className="user-post__image" />
                 <div className="user-post--hovered">
                     <p className="user-post--hovered__info">
                         <img
                             className="user-post--hovered__info__image"
                             src={favoriteIcon}
                             alt="favorite" />
-                        {post.favorites}
+                        {post.num_of_likes}
                     </p>
                     <p className="user-post--hovered__info">
                         <img

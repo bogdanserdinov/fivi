@@ -12,13 +12,6 @@ import (
 	posts_cmd "fivi/services/posts/v1/cmd/app"
 	profile_cmd "fivi/services/profile/v1/cmd/app"
 	"fmt"
-	"github.com/caarlos0/env/v6"
-	_ "github.com/lib/pq"
-	"github.com/magefile/mage/mg"
-	"github.com/magefile/mage/sh"
-	"github.com/pkg/errors"
-	migrate "github.com/rubenv/sql-migrate"
-	"golang.org/x/sync/errgroup"
 	"io/ioutil"
 	"log"
 	"net/url"
@@ -26,6 +19,14 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/caarlos0/env/v6"
+	_ "github.com/lib/pq"
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
+	"github.com/pkg/errors"
+	migrate "github.com/rubenv/sql-migrate"
+	"golang.org/x/sync/errgroup"
 )
 
 type service struct {
@@ -424,7 +425,7 @@ func (Proto) Generate() error {
 type DB mg.Namespace
 
 type MigrationConfig struct {
-	DatabaseUrl     string `env:"DATABASE_URL,notEmpty" envDefault:"postgresql://postgres:123456@localhost:5432/db_name_db?sslmode=disable"`
+	DatabaseUrl     string `env:"DATABASE_URL,notEmpty" envDefault:"postgresql://postgres:123456@localhost:8089/db_name_db?sslmode=disable"`
 	SystemDBName    string `env:"SYSTEM_DB_NAME" envDefault:"postgres"`
 	MigrationsTable string `env:"DATABASE_MIGRATIONS_TABLE" envDefault:"migrations"`
 	MigrationsPath  string `env:"MIGRATIONS_PATH" envDefault:"./services/%s/repository/sql/migrations"`
@@ -607,17 +608,17 @@ func getProtoFiles(path string) ([]string, error) {
 }
 
 var (
-	DBConnString = "postgresql://postgres:123456@localhost/db_name_db?sslmode=disable"
-	ImagesDir    = "/Users/bogdanserdinov/work/fivi/assets"
+	DBConnString = "postgresql://postgres:123456@localhost:8089/db_name_db?sslmode=disable"
+	ImagesDir    = "/Users/anna/Documents/Education/fivi/assets"
 
 	likesCfg = likes_cmd.Config{
 		GrpcServerPort: 9094,
-		DBConnString:   "postgresql://postgres:123456@localhost/likes_db?sslmode=disable",
+		DBConnString:   "postgresql://postgres:123456@localhost:8089/likes_db?sslmode=disable",
 	}
 
 	profileCfg = profile_cmd.Config{
 		GrpcServerPort:      9090,
-		DBConnString:        "postgresql://postgres:123456@localhost/profile_db?sslmode=disable",
+		DBConnString:        "postgresql://postgres:123456@localhost:8089/profile_db?sslmode=disable",
 		ImagesDir:           ImagesDir,
 		PostsServerAddr:     "0.0.0.0:9092",
 		FollowersServerAddr: "0.0.0.0:9093",
@@ -626,22 +627,23 @@ var (
 	commentsCfg = comments_cmd.Config{
 		GrpcServerPort:    9091,
 		ProfileServerAddr: "0.0.0.0:9090",
-		DBConnString:      "postgresql://postgres:123456@localhost/comments_db?sslmode=disable",
+		DBConnString:      "postgresql://postgres:123456@localhost:8089/comments_db?sslmode=disable",
 	}
 
 	followersCfg = followers_cmd.Config{
 		GrpcServerPort:    9093,
 		ProfileServerAddr: "0.0.0.0:9090",
-		DBConnString:      "postgresql://postgres:123456@localhost/followers_db?sslmode=disable",
+		DBConnString:      "postgresql://postgres:123456@localhost:8089/followers_db?sslmode=disable",
 	}
 
 	postsCfg = posts_cmd.Config{
-		GrpcServerPort:     9092,
-		DBConnString:       "postgresql://postgres:123456@localhost/posts_db?sslmode=disable",
-		ImagesDir:          ImagesDir,
-		ProfileServerAddr:  "0.0.0.0:9090",
-		CommentsServerAddr: "0.0.0.0:9091",
-		LikesServerAddr:    "0.0.0.0:9094",
+		GrpcServerPort:      9092,
+		DBConnString:        "postgresql://postgres:123456@localhost:8089/posts_db?sslmode=disable",
+		ImagesDir:           ImagesDir,
+		ProfileServerAddr:   "0.0.0.0:9090",
+		CommentsServerAddr:  "0.0.0.0:9091",
+		LikesServerAddr:     "0.0.0.0:9094",
+		FollowersServerAddr: "0.0.0.0:9093",
 	}
 
 	gatewayCfg = gateway_cmd.Config{
@@ -654,7 +656,7 @@ var (
 		StripPrefix:             "/gateway",
 		JwtSigningKey:           "Uv38ByGCZU8WP18PmmIdcpVmx00QA3xNe7sEB9Hixkk=",
 		JwtTTL:                  time.Hour * 24,
-		StaticDir:               "/Users/bogdanserdinov/work/fivi/web",
+		StaticDir:               "/Users/anna/Documents/Education/fivi/web",
 		ImagesDir:               ImagesDir,
 	}
 )

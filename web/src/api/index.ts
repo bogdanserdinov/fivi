@@ -63,7 +63,7 @@ const INTERNAL_ERROR = 500;
  */
 export class APIClient {
     protected readonly http: HttpClient = new HttpClient();
-    protected readonly ROOT_PATH = 'gateway/';
+    protected readonly ROOT_PATH = '/gateway/api';
 
     /**
          * handles error due to response code.

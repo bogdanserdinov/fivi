@@ -1,16 +1,19 @@
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { Suspense } from 'react';
 
-import { store } from './store';
-import { Switch } from './routes';
+import { store } from '@/app/store';
+import { Switch } from '@/app/routes';
 
 function App() {
     return (
-        <Provider store={store}>
-            <BrowserRouter>
-                <Switch />
-            </BrowserRouter>
-        </Provider>
+        <Suspense fallback={'...Loading'}>
+            <Provider store={store}>
+                <BrowserRouter>
+                    <Switch />
+                </BrowserRouter>
+            </Provider>
+        </Suspense>
     );
 }
 
