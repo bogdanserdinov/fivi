@@ -134,14 +134,19 @@ func (s *Service) UpdateProfile(ctx context.Context, request *profilepb.UpdatePr
 		return nil, errors.Wrap(err, "could not update user")
 	}
 
-	_ = s.DeleteAvatar(ctx, id)
+	if request.Image != "" {
+		_ = s.DeleteAvatar(ctx, id)
 
-	img, err := base64.StdEncoding.DecodeString(request.Image)
-	if err != nil {
-		return nil, err
+		img, err := base64.StdEncoding.DecodeString(request.Image)
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.CreateAvatar(ctx, id, bytes.NewBuffer(img))
+		if err != nil {
+			return nil, err
+		}
 	}
-
-	_ = s.CreateAvatar(ctx, id, bytes.NewBuffer(img))
 
 	return s.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
 		UserDid: userID,

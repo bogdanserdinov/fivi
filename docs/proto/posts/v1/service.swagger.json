@@ -169,8 +169,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/definitions/v1UpdatePostResponse"
             }
           },
           "default": {
@@ -430,6 +429,15 @@
       "required": [
         "identifier"
       ]
+    },
+    "v1UpdatePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1Post"
+        }
+      },
+      "description": "Response for UpdatePost."
     }
   }
 }
