@@ -56,11 +56,12 @@ func (s *Service) Create(ctx context.Context, request *pb_comments.CreateRequest
 	}
 
 	pbComment := &pb_comments.Comment{
-		Identifier: commentID.String(),
-		Text:       request.Text,
-		PostId:     postID.String(),
-		Username:   usernameResp.GetUsername(),
-		UserId:     usernameResp.GetId(),
+		Identifier:     commentID.String(),
+		Text:           request.Text,
+		PostId:         postID.String(),
+		Username:       usernameResp.GetUsername(),
+		UserId:         usernameResp.GetId(),
+		IsAvatarExists: usernameResp.IsAvatarExists,
 	}
 
 	return &pb_comments.CreateResponse{

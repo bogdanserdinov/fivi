@@ -262,6 +262,9 @@
         },
         "user_image": {
           "type": "string"
+        },
+        "is_avatar_exists": {
+          "type": "boolean"
         }
       },
       "description": "Represents an comment object.",
@@ -271,7 +274,8 @@
         "post_id",
         "username",
         "user_id",
-        "user_image"
+        "user_image",
+        "is_avatar_exists"
       ]
     },
     "v1CreatePostRequest": {
