@@ -208,10 +208,15 @@ func (s *Server) GetPostsByCreator(ctx context.Context, request *pb_posts.GetPos
 	}, nil
 }
 
-func (s *Server) UpdatePost(ctx context.Context, request *pb_posts.UpdatePostRequest) (*emptypb.Empty, error) {
+func (s *Server) UpdatePost(ctx context.Context, request *pb_posts.UpdatePostRequest) (*pb_posts.UpdatePostResponse, error) {
 	id, err := uuid.Parse(request.Identifier)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid post id")
+	}
+
+	userIDStr, err := jwt.DIDFromCtx(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
 	}
 
 	relatedPath := filepath.Join("posts", id.String())
@@ -242,7 +247,19 @@ func (s *Server) UpdatePost(ctx context.Context, request *pb_posts.UpdatePostReq
 		}
 	}
 
-	return &emptypb.Empty{}, nil
+	post, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not retrieve post")
+	}
+
+	pbPost, err := s.toPbPost(userIDStr, post)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not cast post")
+	}
+
+	return &pb_posts.UpdatePostResponse{
+		Post: pbPost,
+	}, nil
 }
 
 func (s *Server) DeletePost(ctx context.Context, request *pb_posts.DeletePostRequest) (*emptypb.Empty, error) {

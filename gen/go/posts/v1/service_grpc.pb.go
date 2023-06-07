@@ -38,7 +38,7 @@ type ServiceClient interface {
 	// Get posts by creator id.
 	GetPostsByCreator(ctx context.Context, in *GetPostsByCreatorRequest, opts ...grpc.CallOption) (*GetPostsByCreatorResponse, error)
 	// Update a post.
-	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error)
 	// Delete a post.
 	DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListPosts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPostsResponse, error)
@@ -79,8 +79,8 @@ func (c *serviceClient) GetPostsByCreator(ctx context.Context, in *GetPostsByCre
 	return out, nil
 }
 
-func (c *serviceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *serviceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error) {
+	out := new(UpdatePostResponse)
 	err := c.cc.Invoke(ctx, Service_UpdatePost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ type ServiceServer interface {
 	// Get posts by creator id.
 	GetPostsByCreator(context.Context, *GetPostsByCreatorRequest) (*GetPostsByCreatorResponse, error)
 	// Update a post.
-	UpdatePost(context.Context, *UpdatePostRequest) (*emptypb.Empty, error)
+	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error)
 	// Delete a post.
 	DeletePost(context.Context, *DeletePostRequest) (*emptypb.Empty, error)
 	ListPosts(context.Context, *emptypb.Empty) (*ListPostsResponse, error)
@@ -135,7 +135,7 @@ func (UnimplementedServiceServer) GetPost(context.Context, *GetPostRequest) (*Ge
 func (UnimplementedServiceServer) GetPostsByCreator(context.Context, *GetPostsByCreatorRequest) (*GetPostsByCreatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostsByCreator not implemented")
 }
-func (UnimplementedServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*emptypb.Empty, error) {
+func (UnimplementedServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePost not implemented")
 }
 func (UnimplementedServiceServer) DeletePost(context.Context, *DeletePostRequest) (*emptypb.Empty, error) {

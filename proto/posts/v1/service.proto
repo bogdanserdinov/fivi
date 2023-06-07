@@ -33,7 +33,7 @@ service Service {
   };
 
   // Update a post.
-  rpc UpdatePost(UpdatePostRequest) returns (google.protobuf.Empty) {
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse) {
      option (google.api.http) = {
        put: "/api/v1/posts/post/{identifier}"
        body: "*"
@@ -109,9 +109,7 @@ message UpdatePostRequest {
 
 // Response for UpdatePost.
 message UpdatePostResponse {
-  string text = 1 [json_name = "text", (google.api.field_behavior) = REQUIRED];
-  repeated string images = 2 [json_name = "images", (google.api.field_behavior) = REQUIRED];
-};
+  Post post = 1 [json_name = "post"];};
 
 // Request for DeletePost.
 message DeletePostRequest {
