@@ -23,8 +23,6 @@ export const LoginPage = () => {
     const loginUser = async() => {
         await dispatch(login(new UserLoginData(username, mnemonicPhrases)));
 
-        await window.localStorage.setItem('IS_LOGGEDIN', JSON.stringify(true));
-
         navigate(RoutesConfig.Home.path);
     };
 

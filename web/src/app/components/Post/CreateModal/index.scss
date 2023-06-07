@@ -19,14 +19,18 @@
 
     &__photos {
         margin-bottom: 20px;
-        overflow-y: auto;
-        width: 100%;
+        overflow-x: auto;
+        width: 360px;
         height: 80px;
+        display: flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
 
         &__item {
             position: relative;
             width: 80px;
             height: 80px;
+            margin-right: 10px;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;

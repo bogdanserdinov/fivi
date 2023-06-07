@@ -12,14 +12,15 @@ import (
 	"fivi/lib/jwt"
 	"fivi/lib/store"
 	repository2 "fivi/services/posts/v1/repository"
+	"io"
+	"path/filepath"
+	"strconv"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
-	"path/filepath"
-	"strconv"
 )
 
 var _ pb_posts.ServiceServer = (*Server)(nil)
@@ -36,13 +37,14 @@ type (
 	}
 )
 
-func New(repo *repository2.Queries, store *store.Store, profiles profilepb.ProfileServiceClient, comments pb_comments.ServiceClient, likes pb_likes.ServiceClient) *Server {
+func New(repo *repository2.Queries, store *store.Store, profiles profilepb.ProfileServiceClient, comments pb_comments.ServiceClient, likes pb_likes.ServiceClient, followers pb_followers.FollowersServiceClient) *Server {
 	return &Server{
-		repo:     repo,
-		store:    store,
-		profiles: profiles,
-		comments: comments,
-		likes:    likes,
+		repo:      repo,
+		store:     store,
+		profiles:  profiles,
+		comments:  comments,
+		likes:     likes,
+		followers: followers,
 	}
 }
 
@@ -304,6 +306,12 @@ func (s *Server) ListPosts(ctx context.Context, empty *emptypb.Empty) (*pb_posts
 		}
 		users = append(users, id)
 	}
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return nil, err
+	}
+
+	users = append(users, userID)
 
 	posts, err := s.repo.ListUsersPosts(ctx, users)
 	if err != nil {

@@ -6,28 +6,31 @@ import (
 	pb_posts "fivi/gen/go/posts/v1"
 	store2 "fivi/lib/store"
 	comments_client_grpc "fivi/services/comments/v1/client/grpc"
+	followers_client_grpc "fivi/services/followers/v1/client/grpc"
 	likes_client_grpc "fivi/services/likes/v1/client/grpc"
-	"fivi/services/posts/v1"
+	v1 "fivi/services/posts/v1"
 	"fivi/services/posts/v1/repository"
 	profile_client_grpc "fivi/services/profile/v1/client/grpc"
 	"fmt"
+	"net"
+
 	"github.com/caarlos0/env/v6"
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"net"
 )
 
 const defaultGrpcMessageSize = 100 * 1024 * 1024
 
 type Config struct {
-	GrpcServerPort     int    `env:"GRPC_SERVER_PORT,notEmpty"`
-	DBConnString       string `env:"DATABASE_URL,notEmpty"`
-	ImagesDir          string `env:"DATABASE_URL,notEmpty"`
-	ProfileServerAddr  string `env:"DATABASE_URL,notEmpty"`
-	CommentsServerAddr string `env:"DATABASE_URL,notEmpty"`
-	LikesServerAddr    string `env:"DATABASE_URL,notEmpty"`
+	GrpcServerPort      int    `env:"GRPC_SERVER_PORT,notEmpty"`
+	DBConnString        string `env:"DATABASE_URL,notEmpty"`
+	ImagesDir           string `env:"DATABASE_URL,notEmpty"`
+	ProfileServerAddr   string `env:"DATABASE_URL,notEmpty"`
+	CommentsServerAddr  string `env:"DATABASE_URL,notEmpty"`
+	LikesServerAddr     string `env:"DATABASE_URL,notEmpty"`
+	FollowersServerAddr string
 }
 
 func (cfg *Config) ToMap() map[string]string {
@@ -104,7 +107,12 @@ func (a *app) Run(ctx context.Context) {
 			log.Fatalf("can't connect to likes server: %v", err)
 		}
 
-		likesServer := v1.New(repository, store, profilesClient, commentsClient, likesClient)
+		followersClient, err := followers_client_grpc.NewFollowersServiceClient(a.cfg.FollowersServerAddr)
+		if err != nil {
+			log.Fatalf("can't connect to followers server: %v", err)
+		}
+
+		likesServer := v1.New(repository, store, profilesClient, commentsClient, likesClient, followersClient)
 		if err != nil {
 			log.Fatalf("can't create posts server: %v\n", err)
 		}

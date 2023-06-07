@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import arrowIcon from '@static/img/post/slider/arrow.png';
 
@@ -9,21 +9,40 @@ const FIRST_SLIDE = 0;
 const CHECK_SLIDER_PHOTO_INDEX = 1;
 const ONE_PHOTO = 1;
 
-export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> = ({ sliderImages, classname }) => {
+export const PostSlider: React.FC<{ postId: string; numOfImages: number; classname?: string }> = ({ postId, numOfImages, classname }) => {
+    const [postPhotos, setPostPhotos] = useState<string[]>([]);
+
     const [current, setCurrent] = useState<number>(FIRST_SLIDE);
-    const sliderImagesLength = sliderImages.length;
+
 
     const nextSlide = () => {
-        setCurrent(current === sliderImagesLength - CHECK_SLIDER_PHOTO_INDEX ? FIRST_SLIDE : current + SLIDER_STEP);
+        setCurrent(current === numOfImages - CHECK_SLIDER_PHOTO_INDEX ? FIRST_SLIDE : current + SLIDER_STEP);
     };
 
     const prevSlide = () => {
-        setCurrent(current === FIRST_SLIDE ? sliderImagesLength - CHECK_SLIDER_PHOTO_INDEX : current - SLIDER_STEP);
+        setCurrent(current === FIRST_SLIDE ? numOfImages - CHECK_SLIDER_PHOTO_INDEX : current - SLIDER_STEP);
     };
 
+    const getPhotosArray = () => {
+        const sliderPhotos: string[] = [];
+
+        for (let index = 0; index < numOfImages; index++) {
+            sliderPhotos.push(`${window.location.origin}/images/posts/${postId}/${index}.png`);
+        }
+
+        console.log(sliderPhotos);
+
+        return sliderPhotos;
+    };
+
+    useEffect(() => {
+        const slides = getPhotosArray();
+        setPostPhotos(slides);
+    }, []);
+
     return (
-        <div className={`post-slider ${classname?classname:''}` }>
-            {sliderImagesLength !== ONE_PHOTO ?
+        <div className={`post-slider ${classname ? classname : ''}`}>
+            {numOfImages !== ONE_PHOTO ?
                 <>
                     {current !== FIRST_SLIDE &&
                         <div className="post-slider__arrow post-slider__arrow__prev" onClick={() => prevSlide()}>
@@ -32,24 +51,24 @@ export const PostSlider: React.FC<{ sliderImages: string[];classname?:string }> 
                     }
 
                     <div className="post-slider__container">
-                        {sliderImages.map((sliderImage, index) =>
+                        {postPhotos.map((sliderImage, index) =>
                             <div key={`${sliderImage}`}
                                 className={` post-slider__item ${index === current ? 'active' : ''}`}
                             >
                                 {index === current &&
-                                   <div style={{ backgroundImage: `url(${sliderImages[FIRST_SLIDE]} )` }} className="post-slider__item__image" />
+                                    <div style={{ backgroundImage: `url(${postPhotos[index]} )` }} className="post-slider__item__image" />
                                 }
                             </div>
                         )}
                     </div>
-                    {sliderImagesLength - CHECK_SLIDER_PHOTO_INDEX !== current &&
+                    {numOfImages - CHECK_SLIDER_PHOTO_INDEX !== current &&
                         <div className="post-slider__arrow post-slider__arrow__next" onClick={() => nextSlide()}>
                             <img src={arrowIcon} alt="arrow-left" className="post-slider__arrow__next__image" />
                         </div>
                     }
                 </>
                 :
-                <div style={{ backgroundImage: `url(${sliderImages[FIRST_SLIDE]} )` }} className="post-slider__item__image" />}
+                <div style={{ backgroundImage: `url(${postPhotos[FIRST_SLIDE]} )` }} className="post-slider__item__image" />}
         </div>
     );
 };

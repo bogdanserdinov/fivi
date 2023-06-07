@@ -1,30 +1,71 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { Modal } from '@components/common/Modal';
+import { convertToBase64 } from '@/app/internal/convertImage';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
+import { PostAddData } from '@/post';
+import { addPostPhotos, deletePostPhoto, deletePostPhotos } from '@/app/store/reducers/posts';
+import { RootState } from '@/app/store';
+import { createPost } from '@/app/store/actions/posts';
 
 import addPhotoIcon from '@img/post/addPhotoIcon.png';
 import closeIcon from '@img/User/Post/closeIcon.png';
 
 import './index.scss';
 
+const SECOND_INDEX = 1;
+
 export const PostCreateModal: React.FC<{
     setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }>
     = ({ setIsOpenModal }) => {
         const [files, setFiles] = useState<string[]>();
-        const removePhoto = (index: number) => {
-            if (files) {
-                const galleryImagesData = [...files];
-                galleryImagesData?.splice(index, 1);
-                setFiles(galleryImagesData);
+        const [description, setDescription] = useState<string>('');
+        const dispatch = useAppDispatch();
+
+        const postPhotos: string[] | [] = useAppSelector((state: RootState) => state.postsReducer.postPhotos);
+
+        const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files?.length) {
+                const photosData = [];
+                const filesData = [];
+
+                const uploadedFiles = Array.from(e.target.files);
+
+                for await (const uploadedFile of uploadedFiles) {
+                    photosData.push(URL.createObjectURL(uploadedFile));
+
+                    const convertedFile: string = await convertToBase64(uploadedFile);
+                    filesData.push(convertedFile.split(',')[SECOND_INDEX]);
+                }
+
+                dispatch(addPostPhotos(photosData));
+                setFiles(filesData);
             }
         };
 
-        const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files?.length) {
-                setFiles([URL.createObjectURL(e.target.files[0])]);
+        const create = async () => {
+            try {
+                await dispatch(createPost(new PostAddData(
+                    description,
+                    files
+                )));
+
+                setIsOpenModal(false);
+            }
+            catch (e) {
+                // error
             }
         };
+
+        const deletePhoto = (index: number) => {
+            dispatch(deletePostPhoto(postPhotos[index]));
+        };
+
+        useEffect(() => {
+            dispatch(deletePostPhotos());
+        }, []);
+
 
         return (
             <Modal setIsOpenModal={setIsOpenModal}>
@@ -46,18 +87,23 @@ export const PostCreateModal: React.FC<{
                         </label>
                         <input
                             className="create-post-modal__add-photo__input"
-                            id="create-post-add-photo" type="file" accept="image/png, image/jpeg"
-                            onChange={handleFileChange} />
+                            id="create-post-add-photo"
+                            type="file"
+                            accept="image/png, image/jpeg"
+                            onChange={handleFileChange}
+                            multiple
+                            hidden
+                        />
                     </div>
                     <div className="create-post-modal__photos">{
-                        files?.length && files.length !== 0 && files.map((file, index) =>
-                            <div style={{ backgroundImage: `url(${file}` }}
+                        postPhotos && postPhotos.map((photo, index) =>
+                            <div style={{ backgroundImage: `url(${photo}` }}
                                 className="create-post-modal__photos__item"
-                                key={file}>
+                                key={photo}>
                                 <button
                                     type="button"
                                     className="create-post-modal__photos__item__close"
-                                    onClick={() => removePhoto(index)}
+                                    onClick={() => deletePhoto(index)}
                                 >
                                     <img
                                         src={closeIcon}
@@ -70,8 +116,14 @@ export const PostCreateModal: React.FC<{
 
                     }
                     </div>
-                    <textarea className="create-post-modal__description" />
-                    <button className="create-post-modal__button">
+                    <textarea
+                        className="create-post-modal__description"
+                        onChange={e => setDescription(e.target.value)}
+                    />
+                    <button
+                        className="create-post-modal__button"
+                        type="button"
+                        onClick={() => create()}>
                         Create
                     </button>
                 </form>

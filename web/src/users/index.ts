@@ -7,6 +7,17 @@ export class User {
     ) { };
 }
 
+export class UserProfile {
+    public constructor(
+        public userId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public username: string = '',
+        public email: string = '',
+        public subscribers: [] = [],
+        public subscriptions: [] = [],
+        public isAvatarExists: boolean = false,
+    ) { };
+}
+
 export class UserRegisterData {
     public constructor(
         public email: string = '',
@@ -26,8 +37,7 @@ export class UserLoginData {
 export class UserUpdate {
     public constructor(
         public name: string = '',
-        public surName: string = '',
-        public fullName: string = '',
+        public username: string = '',
         public email: string = '',
         public image: string = ''
     ) { }
