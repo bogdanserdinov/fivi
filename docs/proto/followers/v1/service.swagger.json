@@ -51,8 +51,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/definitions/v1Follower"
             }
           },
           "default": {
@@ -197,6 +196,37 @@
           "FollowersService"
         ]
       }
+    },
+    "/api/followers/v1/{id}": {
+      "delete": {
+        "operationId": "FollowersService_DeleteFollower",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FollowersService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -263,6 +293,15 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        },
+        "isAvatarExists": {
+          "type": "boolean"
+        },
+        "isSubscribed": {
+          "type": "boolean"
+        },
+        "userId": {
           "type": "string"
         }
       }

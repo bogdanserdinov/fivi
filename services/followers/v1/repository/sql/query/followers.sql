@@ -7,10 +7,10 @@ INSERT INTO "followers" (
 VALUES (@id, @follower_id, @followee_id);
 
 -- name: ListFollowers :many
-SELECT follower_id FROM "followers" WHERE "followee_id" = @followee_id;
+SELECT id, follower_id FROM "followers" WHERE "followee_id" = @followee_id;
 
 -- name: ListFollowings :many
-SELECT followee_id FROM "followers" WHERE "follower_id" = @follower_id;
+SELECT id, followee_id FROM "followers" WHERE "follower_id" = @follower_id;
 
 -- name: CountFollowers :one
 SELECT COUNT(*)::BIGINT FROM "followers" WHERE "followee_id" = @followee_id;

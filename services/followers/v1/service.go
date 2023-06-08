@@ -4,6 +4,7 @@ import (
 	"context"
 	"fivi/gen/go/followers/v1"
 	profilepb "fivi/gen/go/profile/v1"
+	"fivi/lib/jwt"
 	repository2 "fivi/services/followers/v1/repository"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -28,14 +29,49 @@ func New(repo *repository2.Queries, profiles profilepb.ProfileServiceClient) *Se
 	}
 }
 
-func (s *Service) Follow(ctx context.Context, request *followers.FollowRequest) (*emptypb.Empty, error) {
+func (s *Service) DeleteFollower(ctx context.Context, request *followers.DeleteFollowerRequest) (*emptypb.Empty, error) {
+	id, err := uuid.Parse(request.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid id")
+	}
+
+	err = s.repo.DeleteFollow(ctx, id)
+
+	return &emptypb.Empty{}, err
+}
+
+func (s *Service) Follow(ctx context.Context, request *followers.FollowRequest) (*followers.Follower, error) {
+	id := uuid.New()
 	err := s.repo.CreateFollow(ctx, repository2.CreateFollowParams{
-		ID:         uuid.New(),
+		ID:         id,
 		FollowerID: request.UserId,
 		FolloweeID: request.UserToFollowId,
 	})
 
-	return &emptypb.Empty{}, err
+	usernameResp, err := s.profiles.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
+		UserDid: request.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
+		UserId:         request.UserToFollowId,
+		UserToFollowId: request.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	pbFollower := &followers.Follower{
+		Id:             id.String(),
+		UserId:         request.GetUserId(),
+		Username:       usernameResp.GetUsername(),
+		IsAvatarExists: usernameResp.GetIsAvatarExists(),
+		IsSubscribed:   isFollowed.GetIsFollow(),
+	}
+
+	return pbFollower, err
 }
 
 func (s *Service) Unfollow(ctx context.Context, request *followers.UnFollowRequest) (*emptypb.Empty, error) {
@@ -50,6 +86,11 @@ func (s *Service) Unfollow(ctx context.Context, request *followers.UnFollowReque
 }
 
 func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFollowersRequest) (*followers.ListFollowersResponse, error) {
+	userIDStr, err := jwt.DIDFromCtx(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+	}
+
 	userIDs, err := s.repo.ListFollowers(ctx, request.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -59,15 +100,26 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 
 	for _, userID := range userIDs {
 		usernameResp, err := s.profiles.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
-			UserDid: userID,
+			UserDid: userID.FollowerID,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
+			UserId:         userIDStr,
+			UserToFollowId: request.UserId,
 		})
 		if err != nil {
 			return nil, err
 		}
 
 		pbFollower := &followers.Follower{
-			Id:       userID,
-			Username: usernameResp.GetUsername(),
+			Id:             userID.ID.String(),
+			UserId:         userID.FollowerID,
+			Username:       usernameResp.GetUsername(),
+			IsAvatarExists: usernameResp.GetIsAvatarExists(),
+			IsSubscribed:   isFollowed.GetIsFollow(),
 		}
 
 		pbFollowers = append(pbFollowers, pbFollower)
@@ -79,6 +131,11 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 }
 
 func (s *Service) ListFollowings(ctx context.Context, request *followers.ListFollowingsRequest) (*followers.ListFollowingsResponse, error) {
+	userIDStr, err := jwt.DIDFromCtx(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+	}
+
 	userIDs, err := s.repo.ListFollowings(ctx, request.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -88,15 +145,26 @@ func (s *Service) ListFollowings(ctx context.Context, request *followers.ListFol
 
 	for _, userID := range userIDs {
 		usernameResp, err := s.profiles.GetProfileByDIDNoAuth(ctx, &profilepb.GetProfileByDIDRequest{
-			UserDid: userID,
+			UserDid: userID.FolloweeID,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
+			UserId:         userIDStr,
+			UserToFollowId: request.UserId,
 		})
 		if err != nil {
 			return nil, err
 		}
 
 		pbFollower := &followers.Follower{
-			Id:       userID,
-			Username: usernameResp.GetUsername(),
+			Id:             userID.ID.String(),
+			UserId:         userID.FolloweeID,
+			Username:       usernameResp.GetUsername(),
+			IsAvatarExists: usernameResp.GetIsAvatarExists(),
+			IsSubscribed:   isFollowed.GetIsFollow(),
 		}
 
 		pbFollowers = append(pbFollowers, pbFollower)
@@ -136,6 +204,7 @@ func (s *Service) IsFollowing(ctx context.Context, request *followers.IsFollowin
 		FollowerID: request.UserId,
 		FolloweeID: request.UserToFollowId,
 	}
+
 	isFollowUser, err := s.repo.IsFollowUser(ctx, in)
 	if err != nil {
 		err = status.Error(codes.Unknown, err.Error())

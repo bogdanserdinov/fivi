@@ -240,6 +240,15 @@
         },
         "id": {
           "type": "string"
+        },
+        "isAvatarExists": {
+          "type": "boolean"
+        },
+        "isSubscribed": {
+          "type": "boolean"
+        },
+        "userId": {
+          "type": "string"
         }
       }
     },
