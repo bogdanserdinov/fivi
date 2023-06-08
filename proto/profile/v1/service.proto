@@ -112,6 +112,7 @@ message Person {
   repeated followers.v1.Follower subscribers = 5;
   repeated followers.v1.Follower subscriptions = 6;
   bool is_avatar_exists = 7;
+  bool is_followed = 8;
 };
 
 message SearchDIDsByUsernameRequest {

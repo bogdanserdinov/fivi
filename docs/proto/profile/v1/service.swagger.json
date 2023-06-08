@@ -317,6 +317,9 @@
         },
         "isAvatarExists": {
           "type": "boolean"
+        },
+        "isFollowed": {
+          "type": "boolean"
         }
       }
     },

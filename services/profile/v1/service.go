@@ -190,6 +190,25 @@ func (s *Service) GetProfileByDID(ctx context.Context, request *profilepb.GetPro
 		return nil, errors.Wrap(err, "could not list followings")
 	}
 
+	var isFollowed bool
+	if request.GetUserDid() != "" {
+		userID, err = jwt.DIDFromCtx(ctx)
+		if err != nil {
+			return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+		}
+
+		isFollow, err := s.followers.IsFollowing(ctx, &pb_followers.IsFollowingRequest{
+			UserId:         request.GetUserDid(),
+			UserToFollowId: userID,
+		})
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "could not retrieve is user followed, %v", err)
+		}
+		isFollowed = isFollow.GetIsFollow()
+	} else {
+		isFollowed = true
+	}
+
 	posts, err := s.posts.GetPostsByCreator(ctx, &pb_posts.GetPostsByCreatorRequest{
 		UserId: userID,
 	})
@@ -207,6 +226,7 @@ func (s *Service) GetProfileByDID(ctx context.Context, request *profilepb.GetPro
 		Subscribers:    followers.GetFollowers(),
 		Subscriptions:  followings.GetFollowings(),
 		IsAvatarExists: s.store.Stat(ctx, relatedPath),
+		IsFollowed:     isFollowed,
 	}, nil
 }
 
