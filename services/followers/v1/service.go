@@ -4,7 +4,6 @@ import (
 	"context"
 	"fivi/gen/go/followers/v1"
 	profilepb "fivi/gen/go/profile/v1"
-	"fivi/lib/jwt"
 	repository2 "fivi/services/followers/v1/repository"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -86,11 +85,6 @@ func (s *Service) Unfollow(ctx context.Context, request *followers.UnFollowReque
 }
 
 func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFollowersRequest) (*followers.ListFollowersResponse, error) {
-	userIDStr, err := jwt.DIDFromCtx(ctx)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
-	}
-
 	userIDs, err := s.repo.ListFollowers(ctx, request.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -107,7 +101,7 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 		}
 
 		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-			UserId:         userIDStr,
+			UserId:         userID.FollowerID,
 			UserToFollowId: request.UserId,
 		})
 		if err != nil {
@@ -131,11 +125,6 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 }
 
 func (s *Service) ListFollowings(ctx context.Context, request *followers.ListFollowingsRequest) (*followers.ListFollowingsResponse, error) {
-	userIDStr, err := jwt.DIDFromCtx(ctx)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
-	}
-
 	userIDs, err := s.repo.ListFollowings(ctx, request.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -152,7 +141,7 @@ func (s *Service) ListFollowings(ctx context.Context, request *followers.ListFol
 		}
 
 		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-			UserId:         userIDStr,
+			UserId:         userID.FolloweeID,
 			UserToFollowId: request.UserId,
 		})
 		if err != nil {
