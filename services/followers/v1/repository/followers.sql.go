@@ -83,22 +83,27 @@ func (q *Queries) IsFollowUser(ctx context.Context, arg IsFollowUserParams) (boo
 }
 
 const listFollowers = `-- name: ListFollowers :many
-SELECT follower_id FROM "followers" WHERE "followee_id" = $1
+SELECT id, follower_id FROM "followers" WHERE "followee_id" = $1
 `
 
-func (q *Queries) ListFollowers(ctx context.Context, followeeID string) ([]string, error) {
+type ListFollowersRow struct {
+	ID         uuid.UUID `json:"id"`
+	FollowerID string    `json:"follower_id"`
+}
+
+func (q *Queries) ListFollowers(ctx context.Context, followeeID string) ([]ListFollowersRow, error) {
 	rows, err := q.query(ctx, q.listFollowersStmt, listFollowers, followeeID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []ListFollowersRow
 	for rows.Next() {
-		var follower_id string
-		if err := rows.Scan(&follower_id); err != nil {
+		var i ListFollowersRow
+		if err := rows.Scan(&i.ID, &i.FollowerID); err != nil {
 			return nil, err
 		}
-		items = append(items, follower_id)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -110,22 +115,27 @@ func (q *Queries) ListFollowers(ctx context.Context, followeeID string) ([]strin
 }
 
 const listFollowings = `-- name: ListFollowings :many
-SELECT followee_id FROM "followers" WHERE "follower_id" = $1
+SELECT id, followee_id FROM "followers" WHERE "follower_id" = $1
 `
 
-func (q *Queries) ListFollowings(ctx context.Context, followerID string) ([]string, error) {
+type ListFollowingsRow struct {
+	ID         uuid.UUID `json:"id"`
+	FolloweeID string    `json:"followee_id"`
+}
+
+func (q *Queries) ListFollowings(ctx context.Context, followerID string) ([]ListFollowingsRow, error) {
 	rows, err := q.query(ctx, q.listFollowingsStmt, listFollowings, followerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []ListFollowingsRow
 	for rows.Next() {
-		var followee_id string
-		if err := rows.Scan(&followee_id); err != nil {
+		var i ListFollowingsRow
+		if err := rows.Scan(&i.ID, &i.FolloweeID); err != nil {
 			return nil, err
 		}
-		items = append(items, followee_id)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

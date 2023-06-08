@@ -25,6 +25,7 @@ const (
 	FollowersService_ListFollowers_FullMethodName   = "/followers.v1.FollowersService/ListFollowers"
 	FollowersService_ListFollowings_FullMethodName  = "/followers.v1.FollowersService/ListFollowings"
 	FollowersService_CountFollowers_FullMethodName  = "/followers.v1.FollowersService/CountFollowers"
+	FollowersService_DeleteFollower_FullMethodName  = "/followers.v1.FollowersService/DeleteFollower"
 	FollowersService_CountFollowings_FullMethodName = "/followers.v1.FollowersService/CountFollowings"
 	FollowersService_IsFollowing_FullMethodName     = "/followers.v1.FollowersService/IsFollowing"
 )
@@ -33,11 +34,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FollowersServiceClient interface {
-	Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*Follower, error)
 	Unfollow(ctx context.Context, in *UnFollowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListFollowers(ctx context.Context, in *ListFollowersRequest, opts ...grpc.CallOption) (*ListFollowersResponse, error)
 	ListFollowings(ctx context.Context, in *ListFollowingsRequest, opts ...grpc.CallOption) (*ListFollowingsResponse, error)
 	CountFollowers(ctx context.Context, in *CountFollowersRequest, opts ...grpc.CallOption) (*CountFollowersResponse, error)
+	DeleteFollower(ctx context.Context, in *DeleteFollowerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CountFollowings(ctx context.Context, in *CountFollowingsRequest, opts ...grpc.CallOption) (*CountFollowingsResponse, error)
 	IsFollowing(ctx context.Context, in *IsFollowingRequest, opts ...grpc.CallOption) (*IsFollowingResponse, error)
 }
@@ -50,8 +52,8 @@ func NewFollowersServiceClient(cc grpc.ClientConnInterface) FollowersServiceClie
 	return &followersServiceClient{cc}
 }
 
-func (c *followersServiceClient) Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *followersServiceClient) Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*Follower, error) {
+	out := new(Follower)
 	err := c.cc.Invoke(ctx, FollowersService_Follow_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,6 +97,15 @@ func (c *followersServiceClient) CountFollowers(ctx context.Context, in *CountFo
 	return out, nil
 }
 
+func (c *followersServiceClient) DeleteFollower(ctx context.Context, in *DeleteFollowerRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, FollowersService_DeleteFollower_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *followersServiceClient) CountFollowings(ctx context.Context, in *CountFollowingsRequest, opts ...grpc.CallOption) (*CountFollowingsResponse, error) {
 	out := new(CountFollowingsResponse)
 	err := c.cc.Invoke(ctx, FollowersService_CountFollowings_FullMethodName, in, out, opts...)
@@ -117,11 +128,12 @@ func (c *followersServiceClient) IsFollowing(ctx context.Context, in *IsFollowin
 // All implementations should embed UnimplementedFollowersServiceServer
 // for forward compatibility
 type FollowersServiceServer interface {
-	Follow(context.Context, *FollowRequest) (*emptypb.Empty, error)
+	Follow(context.Context, *FollowRequest) (*Follower, error)
 	Unfollow(context.Context, *UnFollowRequest) (*emptypb.Empty, error)
 	ListFollowers(context.Context, *ListFollowersRequest) (*ListFollowersResponse, error)
 	ListFollowings(context.Context, *ListFollowingsRequest) (*ListFollowingsResponse, error)
 	CountFollowers(context.Context, *CountFollowersRequest) (*CountFollowersResponse, error)
+	DeleteFollower(context.Context, *DeleteFollowerRequest) (*emptypb.Empty, error)
 	CountFollowings(context.Context, *CountFollowingsRequest) (*CountFollowingsResponse, error)
 	IsFollowing(context.Context, *IsFollowingRequest) (*IsFollowingResponse, error)
 }
@@ -130,7 +142,7 @@ type FollowersServiceServer interface {
 type UnimplementedFollowersServiceServer struct {
 }
 
-func (UnimplementedFollowersServiceServer) Follow(context.Context, *FollowRequest) (*emptypb.Empty, error) {
+func (UnimplementedFollowersServiceServer) Follow(context.Context, *FollowRequest) (*Follower, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Follow not implemented")
 }
 func (UnimplementedFollowersServiceServer) Unfollow(context.Context, *UnFollowRequest) (*emptypb.Empty, error) {
@@ -144,6 +156,9 @@ func (UnimplementedFollowersServiceServer) ListFollowings(context.Context, *List
 }
 func (UnimplementedFollowersServiceServer) CountFollowers(context.Context, *CountFollowersRequest) (*CountFollowersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountFollowers not implemented")
+}
+func (UnimplementedFollowersServiceServer) DeleteFollower(context.Context, *DeleteFollowerRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFollower not implemented")
 }
 func (UnimplementedFollowersServiceServer) CountFollowings(context.Context, *CountFollowingsRequest) (*CountFollowingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountFollowings not implemented")
@@ -253,6 +268,24 @@ func _FollowersService_CountFollowers_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FollowersService_DeleteFollower_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFollowerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowersServiceServer).DeleteFollower(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FollowersService_DeleteFollower_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowersServiceServer).DeleteFollower(ctx, req.(*DeleteFollowerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FollowersService_CountFollowings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CountFollowingsRequest)
 	if err := dec(in); err != nil {
@@ -315,6 +348,10 @@ var FollowersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CountFollowers",
 			Handler:    _FollowersService_CountFollowers_Handler,
+		},
+		{
+			MethodName: "DeleteFollower",
+			Handler:    _FollowersService_DeleteFollower_Handler,
 		},
 		{
 			MethodName: "CountFollowings",

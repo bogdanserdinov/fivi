@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 option go_package = "fivi/gen/go/followers/v1;followers";
 
 service FollowersService {
-  rpc Follow(FollowRequest) returns (google.protobuf.Empty) {
+  rpc Follow(FollowRequest) returns (Follower) {
     option (google.api.http) = {
       post: "/api/followers/v1"
       body: "*"
@@ -39,6 +39,12 @@ service FollowersService {
     };
   };
 
+  rpc DeleteFollower(DeleteFollowerRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/followers/v1/{id}"
+    };
+  }
+
   rpc CountFollowings(CountFollowingsRequest) returns (CountFollowingsResponse) {
     option (google.api.http) = {
       get: "/api/followers/v1/followings/count"
@@ -48,9 +54,16 @@ service FollowersService {
   rpc IsFollowing(IsFollowingRequest) returns (IsFollowingResponse) {};
 };
 
+message DeleteFollowerRequest {
+  string id = 1;
+}
+
 message Follower {
   string username = 1;
   string id = 2;
+  bool is_avatar_exists = 3;
+  bool is_subscribed = 4;
+  string user_id = 5;
 }
 
 message FollowRequest {
