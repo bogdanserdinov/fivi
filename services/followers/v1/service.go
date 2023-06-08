@@ -54,20 +54,12 @@ func (s *Service) Follow(ctx context.Context, request *followers.FollowRequest) 
 		return nil, err
 	}
 
-	isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-		UserId:         request.UserToFollowId,
-		UserToFollowId: request.UserId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	pbFollower := &followers.Follower{
 		Id:             id.String(),
 		UserId:         request.GetUserId(),
 		Username:       usernameResp.GetUsername(),
 		IsAvatarExists: usernameResp.GetIsAvatarExists(),
-		IsSubscribed:   isFollowed.GetIsFollow(),
+		IsSubscribed:   true,
 	}
 
 	return pbFollower, err
@@ -101,8 +93,8 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 		}
 
 		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-			UserId:         userID.FollowerID,
-			UserToFollowId: request.UserId,
+			UserId:         request.UserId,
+			UserToFollowId: userID.FollowerID,
 		})
 		if err != nil {
 			return nil, err
@@ -141,8 +133,8 @@ func (s *Service) ListFollowings(ctx context.Context, request *followers.ListFol
 		}
 
 		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-			UserId:         userID.FolloweeID,
-			UserToFollowId: request.UserId,
+			UserId:         request.UserId,
+			UserToFollowId: userID.FolloweeID,
 		})
 		if err != nil {
 			return nil, err
