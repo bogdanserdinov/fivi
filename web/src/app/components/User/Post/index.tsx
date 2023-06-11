@@ -1,39 +1,51 @@
 import { useState } from 'react';
 
 import { PostModal } from '@components/Post/Modal';
-import { Post } from '@/post';
+import { PostPhoto } from '@components/common/PostPhoto';
 
 import favoriteIcon from '@static/img/User/Post/favoriteIcon.png';
 import commentIcon from '@static/img/User/Post/commentIcon.png';
 import galleryIcon from '@static/img/User/Post/galleryIcon.png';
-
+import { setCurrentPost } from '@/app/store/reducers/posts';
+import { useAppDispatch } from '@/app/hooks/useReduxToolkit';
+import { Post } from '@/post';
 
 import './index.scss';
 
 const ONE_PHOTO = 1;
-const FIRST_PHOTO = 0;
 
 export const UserPost: React.FC<{ post: Post }> = ({ post }) => {
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const dispatch = useAppDispatch();
+
+    const handleModalOpening = () => {
+        dispatch(setCurrentPost(post));
+        setIsOpenModal(true);
+    };
 
     return (
         <>
-            <div className="user-post" onClick={() => setIsOpenModal(true)}>
-                {post.num_of_images > ONE_PHOTO &&
+            <div className="user-post" onClick={() => handleModalOpening()}>
+                {post.numOfImages > ONE_PHOTO &&
                     <img
                         src={galleryIcon}
                         alt="post"
                         className="user-post__lots-photos-icon"
                     />
+
                 }
-                <img src={`${window.location.origin}/images/posts/${post.postId}/0.png`} alt="post" className="user-post__image" />
+                {post.numOfImages ?
+                    <PostPhoto postId={post.postId} postIndex={0} width={300} height={400} isPostPhotoExist={true} />
+                    :
+                    <PostPhoto isPostPhotoExist={false} width={300} height={400} />
+                }
                 <div className="user-post--hovered">
                     <p className="user-post--hovered__info">
                         <img
                             className="user-post--hovered__info__image"
                             src={favoriteIcon}
                             alt="favorite" />
-                        {post.num_of_likes}
+                        {post.numOfLikes}
                     </p>
                     <p className="user-post--hovered__info">
                         <img

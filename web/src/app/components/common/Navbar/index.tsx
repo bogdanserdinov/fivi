@@ -1,25 +1,48 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { Avatar } from '@components/common/Avatar';
 import { PostCreateModal } from '@components/Post/CreateModal';
-import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
-import { getUser } from '@/app/store/actions/users';
-import { RootState } from '@/app/store';
-import { User } from '@/users';
-
 import searchIcon from '@img/Navbar/searchIcon.png';
 import settingsIcon from '@img/Navbar/settingsIcon.png';
 import addPostIcon from '@img/Navbar/addPostIcon.png';
+import { SearchingModal } from './SearchingModal';
+import { User, UserProfile } from '@/users';
+import { RootState } from '@/app/store';
+import { getUser, getUserProfile, searchUsers } from '@/app/store/actions/users';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
+import { getPostsProfile } from '@/app/store/actions/posts';
+import { setCurrentId } from '@/app/store/reducers/posts';
+
 
 import './index.scss';
 
 const AVATAR_SIZE = 50;
 export const Navbar = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
 
     const user: User = useAppSelector((state: RootState) => state.usersReducer.user);
+    const foundedUsers: UserProfile[] | [] = useAppSelector((state: RootState) => state.usersReducer.foundedUsers);
+
+    const handleSearching = (e: any) => {
+        if (e.target.value) {
+            setIsSearching(true);
+            dispatch(searchUsers(e.target.value));
+        }
+        else {
+            setIsSearching(false);
+        }
+    };
+
+    const handleRedirectingUserPage = () => {
+        navigate(`/user/${user.userId}`);
+        dispatch(getUserProfile(user.userId));
+        dispatch(getPostsProfile(user.userId));
+        dispatch(setCurrentId(user.userId));
+    };
 
     useEffect(() => {
         dispatch(getUser());
@@ -37,7 +60,12 @@ export const Navbar = () => {
                             <img className="header__search__icon" src={searchIcon} alt="search icon" />
                         </label>
                         <input className="header__search__input"
-                            id="search" type="text" placeholder="Я шукаю..." />
+                            id="search"
+                            type="text"
+                            placeholder="Я шукаю..."
+                            onChange={handleSearching}
+                            autoComplete="off"
+                        />
                         <button className="header__search__button" >
                             Знайти
                         </button>
@@ -53,13 +81,14 @@ export const Navbar = () => {
                                 alt="settings"
                                 className="header__icon__image" />
                         </NavLink>
-                        <NavLink className="header__user" to={`/user/${user.userId}`}>
-                            <Avatar size={AVATAR_SIZE} photo={`${window.location.origin}/images/users/${user.userId}.png`} isAvatarExists={user.isAvatarExists} />
+                        <div className="header__user" onClick={() => handleRedirectingUserPage()}>
+                            <Avatar size={AVATAR_SIZE} userId={user.userId} isAvatarExists={user.isAvatarExists} />
                             <p className="header__user__text">{user.username}</p>
-                        </NavLink>
+                        </div>
                     </div>
                 </div>
+                {isOpenModal && <PostCreateModal setIsOpenModal={setIsOpenModal} />}
             </header>
-            {isOpenModal && <PostCreateModal setIsOpenModal={setIsOpenModal} />}
+            {isSearching && <SearchingModal setIsSearching={setIsSearching} foundedUsers={foundedUsers} />}
         </>);
 };

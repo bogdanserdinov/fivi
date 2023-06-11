@@ -1,17 +1,18 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 
 import { Modal } from '@components/common/Modal';
+import addPhotoIcon from '@img/post/addPhotoIcon.png';
+import closeIcon from '@img/User/Post/closeIcon.png';
 import { convertToBase64 } from '@/app/internal/convertImage';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
 import { PostAddData } from '@/post';
-import { addPostPhotos, deletePostPhoto, deletePostPhotos } from '@/app/store/reducers/posts';
+import { addPostPhotos, deletePostPhoto, deletePostPhotos, setCurrentId } from '@/app/store/reducers/posts';
 import { RootState } from '@/app/store';
 import { createPost } from '@/app/store/actions/posts';
 
-import addPhotoIcon from '@img/post/addPhotoIcon.png';
-import closeIcon from '@img/User/Post/closeIcon.png';
 
 import './index.scss';
+import { User } from '@/users';
 
 const SECOND_INDEX = 1;
 
@@ -23,9 +24,10 @@ export const PostCreateModal: React.FC<{
         const [description, setDescription] = useState<string>('');
         const dispatch = useAppDispatch();
 
+        const user: User = useAppSelector((state: RootState) => state.usersReducer.user);
         const postPhotos: string[] | [] = useAppSelector((state: RootState) => state.postsReducer.postPhotos);
 
-        const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const handleFileChange = async(e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.files?.length) {
                 const photosData = [];
                 const filesData = [];
@@ -44,8 +46,9 @@ export const PostCreateModal: React.FC<{
             }
         };
 
-        const create = async () => {
+        const create = async() => {
             try {
+                dispatch(setCurrentId(user.userId));
                 await dispatch(createPost(new PostAddData(
                     description,
                     files

@@ -9,8 +9,9 @@ import { BadRequestError } from '@/api';
 import { UsersService } from '@/users/service';
 import { userSlice } from '@/app/store/reducers/users';
 import { setErrorMessage } from '@/app/store/reducers/error';
-import { UserLoginData, UserProfile, UserRegisterData, UserUpdate } from '@/users';
+import { UserLoginData, UserRegisterData, UserUpdate } from '@/users';
 import { setLocalStorageItem } from '@/app/utils/localStorage';
+import { FollowData } from '@/followers';
 
 const usersClient = new UsersClient();
 export const usersService = new UsersService(usersClient);
@@ -22,7 +23,6 @@ export const register = createAsyncThunk(
         setLocalStorageItem('AUTH_TOKEN', token);
     }
 );
-
 
 export const login = createAsyncThunk(
     '/auth/login',
@@ -71,3 +71,30 @@ export const getMnemonicPhrases = () => async function(dispatch: Dispatch) {
         }
     }
 };
+
+export const searchUsers = createAsyncThunk(
+    '/search/users',
+    async function(text: string) {
+        const users = await usersService.searchUsers(text);
+
+        return users;
+    }
+);
+
+export const followUser = createAsyncThunk(
+    '/follow/user',
+    async function(followData: FollowData) {
+        const followedUser = await usersService.followUser(followData);
+
+        return followedUser;
+    }
+);
+
+export const unFollowUser = createAsyncThunk(
+    '/unfollow/user',
+    async function(subscriptionId: string) {
+        await usersService.unFollowUser(subscriptionId);
+
+        return subscriptionId;
+    }
+);

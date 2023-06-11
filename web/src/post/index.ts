@@ -6,12 +6,13 @@ export class Comment {
         public username: string = '',
         public userId: string = '',
         public userImage: string = '',
+        public isAvatarExists: boolean = false,
     ) { }
 }
 
 export class CommentCreate {
     public constructor(
-        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public postId: string = '',
         public text: string = '',
     ) { }
 }
@@ -30,14 +31,14 @@ export class Creator {
 
 export class Post {
     public constructor(
-        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public postId: string = '',
         public description: string = '',
         public creatorId: string = '',
         public creatorUsername: string = '',
         public images: string[] = [],
-        public num_of_images: number = 0,
-        public num_of_likes: number = 0,
-        public num_of_comments: number = 0,
+        public numOfImages: number = 0,
+        public numOfLikes: number = 0,
+        public numOfComments: number = 0,
         public comments: Comment[] = [],
         public isLiked: boolean = false,
         public creatorProfile: Creator = new Creator()
@@ -54,7 +55,7 @@ export class PostAddData {
 
 export class PostUpdateData {
     public constructor(
-        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public postId: string = '',
         public text: string = '',
         public images: string[] = [],
     ) { };
@@ -62,7 +63,7 @@ export class PostUpdateData {
 
 export class PostLikedAction {
     public constructor(
-        public postId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public postId: string = '',
         public isLiked: boolean = false,
     ) { };
 }

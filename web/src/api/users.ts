@@ -1,6 +1,7 @@
 import { APIClient } from '.';
 
-import { User, UserLoginData, UserProfile, UserRegisterData, UserUpdate } from '@/users';
+import { Subscribers, User, UserLoginData, UserProfile, UserRegisterData, UserUpdate } from '@/users';
+import { FollowData } from '@/followers';
 
 /**
  * UsersClient is a http implementation of users API.
@@ -67,15 +68,23 @@ export class UsersClient extends APIClient {
         }
         const user = await response.json();
 
+        const subscribers = user.subscribers.map((subscriber: any) =>
+            new Subscribers(subscriber.id, subscriber.userId, subscriber.username, subscriber.isAvatarExists, subscriber.isSubscribed));
+
+        const subscribtions = user.subscriptions.map((subscribtion: any) =>
+            new Subscribers(subscribtion.id, subscribtion.userId, subscribtion.username, subscribtion.isAvatarExists, subscribtion.isSubscribed));
+
         return new UserProfile(
             user.id,
             user.username,
             user.email,
-            user.subscribers,
-            user.subscribtions,
+            subscribers,
+            subscribtions,
             user.isAvatarExists,
+            user.isFollowed
         );
-    }
+    };
+
 
     /** Gets user */
     public async getUser(): Promise<User> {
@@ -108,5 +117,64 @@ export class UsersClient extends APIClient {
         const mnemonicPhrases = await response.json();
 
         return mnemonicPhrases.mnemonic;
+    }
+
+    /** Searches users */
+    public async searchUsers(text: string): Promise<UserProfile[]> {
+        const path = `${this.ROOT_PATH}/profile/v1/search?username=${text}`;
+        const response = await this.http.get(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const users = await response.json();
+
+
+        return users.profiles.map((user: any) => {
+            const subscribers = user.subscribers.map((subscriber: any) =>
+                new Subscribers(subscriber.id, subscriber.username));
+
+            const subscribtions = user.subscribers.map((subscribtion: any) =>
+                new Subscribers(subscribtion.id, subscribtion.username));
+
+            return new UserProfile(
+                user.id,
+                user.username,
+                user.email,
+                subscribers,
+                subscribtions,
+                user.isAvatarExists,
+                user.isFollowed
+            );
+        });
+    };
+
+    /** exposes user following logic */
+    public async followUser(followData: FollowData): Promise<Subscribers> {
+        const path = `${this.ROOT_PATH}/followers/v1`;
+        const response = await this.http.post(path, JSON.stringify(followData));
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
+        const followedUser = await response.json();
+
+        return new Subscribers(
+            followedUser.id,
+            followedUser.userId,
+            followedUser.username,
+            followedUser.isAvatarExists,
+            followedUser.isSubscribed,
+        );
+    }
+
+    /** exposes user unfollowing logic */
+    public async unFollowUser(userId: string): Promise<void> {
+        const path = `${this.ROOT_PATH}/followers/v1/follower/${userId}`;
+        const response = await this.http.delete(path);
+
+        if (!response.ok) {
+            await this.handleError(response);
+        }
     }
 }

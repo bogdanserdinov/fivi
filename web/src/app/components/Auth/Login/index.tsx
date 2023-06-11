@@ -17,7 +17,7 @@ export const LoginPage = () => {
     const [mnemonicPhrases, setMnemonicPhrases] = useState<string[]>();
 
     const convertMnemonicPhrases = (phrases: string) => {
-        setMnemonicPhrases(phrases.split(','));
+        setMnemonicPhrases(phrases.split(', '));
     };
 
     const loginUser = async() => {

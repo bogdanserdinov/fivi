@@ -1,20 +1,32 @@
 export class User {
     public constructor(
-        public userId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public userId: string = '',
         public username: string = '',
         public email: string = '',
         public isAvatarExists: boolean = false,
     ) { };
 }
 
+export class Subscribers {
+    public constructor(
+        public subscriptionId: string = '',
+        public userId: string = '',
+        public username: string = '',
+        public isAvatarExists: boolean = false,
+        public isSubscribed: boolean = false
+    ) { };
+}
+
+
 export class UserProfile {
     public constructor(
-        public userId: string = 'did:ion:test:EiAH4mOt_BJthhMkoizi9538NYHtP4-ai49hzQU9WSIJjA',
+        public userId: string = '',
         public username: string = '',
         public email: string = '',
-        public subscribers: [] = [],
-        public subscriptions: [] = [],
+        public subscribers: Subscribers[] = [],
+        public subscriptions: Subscribers[] = [],
         public isAvatarExists: boolean = false,
+        public isFollowed: boolean = false,
     ) { };
 }
 

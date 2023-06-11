@@ -2,23 +2,26 @@
     width: 100%;
     margin-bottom: 10px;
     display: flex;
-    align-items: flex-start;
+
+    &__user {
+        display: flex;
+    }
 
     &__photo {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        cursor: pointer;
     }
 
     &__nickname {
-        margin: 3px 7px 0 15px;
+        margin-right: 5px;
         font-size: 16px;
         font-weight: 500;
         color: black;
+        cursor: pointer;
     }
 
     &__text {
-        margin-top: 3px;
+        display: flex;
+        margin: 3px 7px 0 15px;
         font-size: 16px;
     }
 }

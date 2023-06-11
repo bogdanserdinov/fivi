@@ -48,6 +48,8 @@
             &__image {
                 width: 24px;
                 height: 24px;
+                -webkit-filter: drop-shadow(0 0 10px #000);
+                filter: drop-shadow(0 0 10px #000);
             }
         }
 

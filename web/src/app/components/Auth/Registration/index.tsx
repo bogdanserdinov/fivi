@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import copyIcon from '@img/Auth/copy.png';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
 import { RootState } from '@/app/store';
 
@@ -8,10 +9,10 @@ import { getMnemonicPhrases, register } from '@/app/store/actions/users';
 import { UserRegisterData } from '@/users';
 import { RoutesConfig } from '@/app/routes';
 
-import copyIcon from '@img/Auth/copy.png';
-
 import './index.scss';
 import '../index.scss';
+
+const LAST_INDEX_PHRASES = 11;
 
 export const RegistrationPage = () => {
     const dispatch = useAppDispatch();
@@ -22,10 +23,22 @@ export const RegistrationPage = () => {
 
     const mnemonicPhrases: string[] | null = useAppSelector((state: RootState) => state.usersReducer.mnemonicPhrases);
 
-    const registerUser = async () => {
+    const registerUser = async() => {
         await dispatch(register(new UserRegisterData(email, username, mnemonicPhrases)));
 
         navigate(RoutesConfig.Home.path);
+    };
+
+    const takeMnemonicToBuffer = () => {
+        let mnemonicString = '';
+
+        mnemonicPhrases.map((phrase: string, index: number) => {
+            mnemonicString += phrase;
+            if (index !== LAST_INDEX_PHRASES) {
+                mnemonicString += ', ';
+            }
+        });
+        navigator.clipboard.writeText(mnemonicString);
     };
 
     useEffect(() => {
@@ -52,8 +65,9 @@ export const RegistrationPage = () => {
                         </div>
                     </div>
                 )}
-                <button className="registration__copy">
-                    <img src={copyIcon} alt="copy icon" className="registration__copy__icon" /> Copy
+                <button className="registration__copy" onClick={() => takeMnemonicToBuffer()}>
+                    <img src={copyIcon} alt="copy icon" className="registration__copy__icon" />
+                    Copy
                 </button>
             </div>
 

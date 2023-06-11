@@ -11,6 +11,10 @@ import (
 	"fivi/lib/jwt"
 	"fivi/lib/store"
 	repository2 "fivi/services/profile/v1/repository"
+	"io"
+	"path/filepath"
+	"strings"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -18,9 +22,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
-	"path/filepath"
-	"strings"
 )
 
 var _ profilepb.ProfileServiceServer = (*Service)(nil)
@@ -198,8 +199,8 @@ func (s *Service) GetProfileByDID(ctx context.Context, request *profilepb.GetPro
 		}
 
 		isFollow, err := s.followers.IsFollowing(ctx, &pb_followers.IsFollowingRequest{
-			UserId:         request.GetUserDid(),
-			UserToFollowId: userID,
+			UserId:         userID,
+			UserToFollowId: request.GetUserDid(),
 		})
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "could not retrieve is user followed, %v", err)

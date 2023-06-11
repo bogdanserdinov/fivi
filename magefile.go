@@ -425,7 +425,7 @@ func (Proto) Generate() error {
 type DB mg.Namespace
 
 type MigrationConfig struct {
-	DatabaseUrl     string `env:"DATABASE_URL,notEmpty" envDefault:"postgresql://postgres:123456@localhost:8089/db_name_db?sslmode=disable"`
+	DatabaseUrl     string `env:"DATABASE_URL,notEmpty" envDefault:"postgresql://postgres:123456@localhost:6432/db_name_db?sslmode=disable"`
 	SystemDBName    string `env:"SYSTEM_DB_NAME" envDefault:"postgres"`
 	MigrationsTable string `env:"DATABASE_MIGRATIONS_TABLE" envDefault:"migrations"`
 	MigrationsPath  string `env:"MIGRATIONS_PATH" envDefault:"./services/%s/repository/sql/migrations"`
@@ -608,17 +608,17 @@ func getProtoFiles(path string) ([]string, error) {
 }
 
 var (
-	DBConnString = "postgresql://postgres:123456@localhost:8089/db_name_db?sslmode=disable"
+	DBConnString = "postgresql://postgres:123456@localhost:6432/db_name_db?sslmode=disable"
 	ImagesDir    = "/Users/anna/Documents/Education/fivi/assets"
 
 	likesCfg = likes_cmd.Config{
 		GrpcServerPort: 9094,
-		DBConnString:   "postgresql://postgres:123456@localhost:8089/likes_db?sslmode=disable",
+		DBConnString:   "postgresql://postgres:123456@localhost:6432/likes_db?sslmode=disable",
 	}
 
 	profileCfg = profile_cmd.Config{
 		GrpcServerPort:      9090,
-		DBConnString:        "postgresql://postgres:123456@localhost:8089/profile_db?sslmode=disable",
+		DBConnString:        "postgresql://postgres:123456@localhost:6432/profile_db?sslmode=disable",
 		ImagesDir:           ImagesDir,
 		PostsServerAddr:     "0.0.0.0:9092",
 		FollowersServerAddr: "0.0.0.0:9093",
@@ -627,18 +627,18 @@ var (
 	commentsCfg = comments_cmd.Config{
 		GrpcServerPort:    9091,
 		ProfileServerAddr: "0.0.0.0:9090",
-		DBConnString:      "postgresql://postgres:123456@localhost:8089/comments_db?sslmode=disable",
+		DBConnString:      "postgresql://postgres:123456@localhost:6432/comments_db?sslmode=disable",
 	}
 
 	followersCfg = followers_cmd.Config{
 		GrpcServerPort:    9093,
 		ProfileServerAddr: "0.0.0.0:9090",
-		DBConnString:      "postgresql://postgres:123456@localhost:8089/followers_db?sslmode=disable",
+		DBConnString:      "postgresql://postgres:123456@localhost:6432/followers_db?sslmode=disable",
 	}
 
 	postsCfg = posts_cmd.Config{
 		GrpcServerPort:      9092,
-		DBConnString:        "postgresql://postgres:123456@localhost:8089/posts_db?sslmode=disable",
+		DBConnString:        "postgresql://postgres:123456@localhost:6432/posts_db?sslmode=disable",
 		ImagesDir:           ImagesDir,
 		ProfileServerAddr:   "0.0.0.0:9090",
 		CommentsServerAddr:  "0.0.0.0:9091",

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import arrowIcon from '@static/img/post/slider/arrow.png';
 
 import './index.scss';
+import { PostPhoto } from '@components/common/PostPhoto';
 
 const SLIDER_STEP = 1;
 const FIRST_SLIDE = 0;
@@ -30,8 +31,6 @@ export const PostSlider: React.FC<{ postId: string; numOfImages: number; classna
             sliderPhotos.push(`${window.location.origin}/images/posts/${postId}/${index}.png`);
         }
 
-        console.log(sliderPhotos);
-
         return sliderPhotos;
     };
 
@@ -56,7 +55,7 @@ export const PostSlider: React.FC<{ postId: string; numOfImages: number; classna
                                 className={` post-slider__item ${index === current ? 'active' : ''}`}
                             >
                                 {index === current &&
-                                    <div style={{ backgroundImage: `url(${postPhotos[index]} )` }} className="post-slider__item__image" />
+                                    <PostPhoto urlPhoto={postPhotos[index]} width={400} height={500} isPostPhotoExist={true} />
                                 }
                             </div>
                         )}
@@ -68,7 +67,9 @@ export const PostSlider: React.FC<{ postId: string; numOfImages: number; classna
                     }
                 </>
                 :
-                <div style={{ backgroundImage: `url(${postPhotos[FIRST_SLIDE]} )` }} className="post-slider__item__image" />}
+                <PostPhoto urlPhoto={postPhotos[FIRST_SLIDE]} width={400} height={500} isPostPhotoExist={true} />
+
+            }
         </div>
     );
 };

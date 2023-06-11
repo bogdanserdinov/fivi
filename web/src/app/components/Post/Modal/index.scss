@@ -60,6 +60,7 @@
         align-items: center;
         text-decoration: none;
         color: #000;
+        cursor: pointer;
 
         &__photo {
             width: 50px;
@@ -92,7 +93,7 @@
     }
 
     &__comments {
-        height: calc(600px - 80px - 110px);
+        height: calc(600px - 80px - 120px);
         padding: 10px;
         overflow-y: auto;
     }

@@ -1,25 +1,27 @@
 import { Modal } from '@components/common/Modal';
 
+import deleteIcon from '@img/User/Post/Settings/deleteIcon.png';
+import editIcon from '@img/User/Post/Settings/editIcon.png';
 import { deletePost } from '@/app/store/actions/posts';
 import { useAppDispatch } from '@/app/hooks/useReduxToolkit';
 
-import deleteIcon from '@img/User/Post/Settings/deleteIcon.png';
-import editIcon from '@img/User/Post/Settings/editIcon.png';
 
 import './index.scss';
 
 export const SettingsModal: React.FC<{
     setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModalEditing: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModalSettings: React.Dispatch<React.SetStateAction<boolean>>;
     postId: string;
-}> = ({ setIsOpenModal, setIsModalEditing, postId }) => {
+}> = ({ setIsOpenModal, setIsModalEditing, postId, setIsModalSettings }) => {
     const dispatch = useAppDispatch();
     const deletePostss = () => {
         dispatch(deletePost(postId));
+        setIsOpenModal(false);
     };
 
     const editPost = () => {
-        setIsOpenModal(false);
+        setIsModalSettings(false);
         setIsModalEditing(true);
     };
 

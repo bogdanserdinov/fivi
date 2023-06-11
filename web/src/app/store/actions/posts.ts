@@ -15,7 +15,6 @@ import { postsSlice } from '@/app/store/reducers/posts';
 const postsClient = new PostsClient();
 export const postsService = new PostsService(postsClient);
 
-
 export const createPost = createAsyncThunk(
     '/post/create',
     async function(post: PostAddData) {
@@ -53,7 +52,7 @@ export const getPost = createAsyncThunk(
 export const getPostsHomePage = () => async function(dispatch: Dispatch) {
     try {
         const posts = await postsService.getPostsHomePage();
-        console.log(posts);
+
         dispatch(postsSlice.actions.setPostsHomePage(posts));
     } catch (error: any) {
         if (error instanceof BadRequestError) {

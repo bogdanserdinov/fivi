@@ -12,6 +12,43 @@
         grid-template-columns: repeat(3, 300px);
         gap: 20px;
 
+        &__no-item {
+            display: flex;
+            position: relative;
+            justify-content: center;
+            flex-direction: column;
+
+            &:after {
+                position: absolute;
+                width: 940px;
+                height: 1.5px;
+                left: 50%;
+                transform: translateX(-50%);
+                top: -30px;
+                content: "";
+                background: $line-color;
+            }
+
+            &__title {
+                font-size: 40px;
+                margin: 30px 0 20px;
+            }
+
+            &__add-post {
+                display: block;
+                width: 250px;
+                height: 50px;
+                font-size: 18px;
+                background: black;
+                border-radius: 5px;
+                border: none;
+                outline: none;
+                color: white;
+                margin: 0 auto;
+                cursor: pointer;
+            }
+        }
+
         &:after {
             position: absolute;
             width: 100%;

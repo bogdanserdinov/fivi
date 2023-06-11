@@ -1,5 +1,6 @@
-import { User, UserLoginData, UserProfile, UserRegisterData, UserUpdate } from '.';
+import { Subscribers, User, UserLoginData, UserProfile, UserRegisterData, UserUpdate } from '.';
 import { UsersClient } from '@/api/users';
+import { FollowData } from '@/followers';
 
 /**
  * Exposes all users related logic.
@@ -37,5 +38,20 @@ export class UsersService {
     /** logouts */
     public async getMnemonicPhrases(): Promise<string[]> {
         return await this.users.getMnemonicPhrases();
+    }
+
+    /** Searches users */
+    public async searchUsers(text: string): Promise<UserProfile[]> {
+        return await this.users.searchUsers(text);
+    }
+
+    /** Searches users */
+    public async followUser(followData: FollowData): Promise<Subscribers> {
+        return await this.users.followUser(followData);
+    }
+
+    /** Searches users */
+    public async unFollowUser(userId: string): Promise<void> {
+        await this.users.unFollowUser(userId);
     }
 }

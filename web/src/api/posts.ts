@@ -2,6 +2,7 @@ import { APIClient } from '.';
 
 import { Comment, CommentCreate, Creator, Post, PostAddData, PostUpdateData } from '@/post';
 
+const NO_ITEMS_ARRAY = 0;
 /**
  * PostsClient is a http implementation of posts API.
  * Exposes all posts-related functionality.
@@ -18,7 +19,7 @@ export class PostsClient extends APIClient {
 
         const postData = await response.json();
 
-        const comments = postData.post.comments.length > 1 ?
+        const comments = postData.post.comments.length > NO_ITEMS_ARRAY ?
             postData.map((comment: any) =>
                 new Comment(
                     comment.identifier,
@@ -75,7 +76,7 @@ export class PostsClient extends APIClient {
                 post.creator_profile.subscribtions,
                 post.creator_profile.isAvatarExists,
             );
-            const comments = post.comments.length > 1 ?
+            const comments = post.comments.length > NO_ITEMS_ARRAY ?
                 post.comments.map((comment: any) =>
                     new Comment(
                         comment.identifier,
@@ -83,7 +84,8 @@ export class PostsClient extends APIClient {
                         comment.post_id,
                         comment.username,
                         comment.user_id,
-                        comment.user_image
+                        comment.user_image,
+                        comment.is_avatar_exists
                     )
                 ) : [];
 
@@ -144,7 +146,7 @@ export class PostsClient extends APIClient {
                 post.creator_profile.subscribtions,
                 post.creator_profile.isAvatarExists,
             );
-            const comments = post.comments.length > 1 ?
+            const comments = post.comments.length > NO_ITEMS_ARRAY ?
                 post.comments.map((comment: any) =>
                     new Comment(
                         comment.identifier,
@@ -187,7 +189,7 @@ export class PostsClient extends APIClient {
     /** Updates post */
     public async update(post: PostUpdateData): Promise<void> {
         const path = `${this.ROOT_PATH}/v1/posts/post/${post.postId}`;
-        const response = await this.http.put(path, JSON.stringify(post.text, post.images));
+        const response = await this.http.put(path, JSON.stringify({ text: post.text, images: post.images }));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -197,7 +199,7 @@ export class PostsClient extends APIClient {
     /** Likes/dislikes post */
     public async likeAndDislike(postId: string): Promise<void> {
         const path = `${this.ROOT_PATH}/likes/v1`;
-        const response = await this.http.post(path, JSON.stringify({ post_id: postId }));
+        const response = await this.http.post(path, JSON.stringify({ 'post_id': postId }));
 
         if (!response.ok) {
             await this.handleError(response);
@@ -216,12 +218,12 @@ export class PostsClient extends APIClient {
         const commentData = await response.json();
 
         return new Comment(
-            commentData.identifier,
-            commentData.text,
-            commentData.post_id,
-            commentData.username,
-            commentData.user_id,
-            commentData.user_image
+            commentData.comment.identifier,
+            commentData.comment.text,
+            commentData.comment.post_id,
+            commentData.comment.username,
+            commentData.comment.user_id,
+            commentData.comment.user_image
         );
     }
 }

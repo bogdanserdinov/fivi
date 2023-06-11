@@ -1,16 +1,15 @@
 import { Avatar } from '@components/common/Avatar';
 import { Modal } from '@components/common/Modal';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
-import { Post } from '@/post';
+import addPhotoIcon from '@img/post/addPhotoIcon.png';
+import closeIcon from '@img/User/Post/closeIcon.png';
+import { Post, PostUpdateData } from '@/post';
 import { addPostPhotos, deletePostPhoto, deletePostPhotos, setPostPhotos } from '@/app/store/reducers/posts';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/useReduxToolkit';
 import { RootState } from '@/app/store';
 import { convertToBase64 } from '@/app/internal/convertImage';
-
-import addPhotoIcon from '@img/post/addPhotoIcon.png';
-import closeIcon from '@img/User/Post/closeIcon.png';
+import { updatePost } from '@/app/store/actions/posts';
 
 import './index.scss';
 
@@ -31,7 +30,7 @@ export const EditingModal: React.FC<{
         setDescription(e.target.value);
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.length) {
             const photosData = [];
             const filesData = [];
@@ -51,13 +50,27 @@ export const EditingModal: React.FC<{
     };
 
     const deletePhoto = (index: number) => {
+        if (postPhotos[index] === currentPhoto && postPhotos.length > 0) {
+            setCurrentPhoto(postPhotos[0]);
+        }
         dispatch(deletePostPhoto(postPhotos[index]));
+    };
+
+    const sendChanges = async() => {
+        await dispatch(updatePost(new PostUpdateData(
+            post.postId,
+            description,
+            files
+        )));
+
+
+        setIsOpenModal(false);
     };
 
     const getPhotosArray = () => {
         const sliderPhotos: string[] = [];
 
-        for (let index = 0; index < post.num_of_images; index++) {
+        for (let index = 0; index < post.numOfImages; index++) {
             sliderPhotos.push(`${window.location.origin}/images/posts/${post.postId}/${index}.png`);
         }
 
@@ -128,13 +141,26 @@ export const EditingModal: React.FC<{
                     </div>
                 </div>
                 <div className="editing-modal__info">
-                    <Link className="editing-modal__user-info" to={`/user/${post.creatorId}`}>
-                        <Avatar size={40} photo={`${window.location.origin}/images/users/${post.postId}.png`} isAvatarExists={post.creatorProfile.isAvatarExists} />
-                        <p className="editing-modal__user-info__username">{post.creatorProfile.username}</p>
-                    </Link>
-                    <textarea value={description} onChange={onChangeDescription} />
+                    <div>
+                        <div className="editing-modal__user-info" >
+                            <Avatar size={40} userId={post.creatorProfile.creatorId} isAvatarExists={post.creatorProfile.isAvatarExists} />
+                            <p className="editing-modal__user-info__username">{post.creatorProfile.username}</p>
+                        </div>
+                        <textarea
+                            className="editing-modal__comment"
+                            value={description}
+                            onChange={onChangeDescription} />
+
+                    </div>
+
+                    <button
+                        onClick={() => sendChanges()}
+                        className="editing-modal__send-changes"
+                    >
+                        Застосувати зміни
+                    </button>
                 </div>
             </div>
-        </Modal>
+        </Modal >
     );
 };

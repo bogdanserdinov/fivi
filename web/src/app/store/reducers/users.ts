@@ -1,7 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import { getUserProfile, updateUser } from '../actions/users';
+import {
+    followUser,
+    getUserProfile,
+    searchUsers,
+    unFollowUser,
+    updateUser,
+} from '../actions/users';
 import { User, UserProfile } from '@/users';
 
 /** Exposes channels state */
@@ -11,6 +17,7 @@ class UsersState {
         public user: User = new User(),
         public mnemonicPhrases: string[] = [],
         public userProfile: UserProfile = new UserProfile(),
+        public foundedUsers: UserProfile[] = []
     ) { }
 }
 
@@ -18,6 +25,8 @@ const initialState: UsersState = {
     user: new User(),
     mnemonicPhrases: [],
     userProfile: new UserProfile(),
+    foundedUsers: [],
+
 };
 
 export const userSlice = createSlice({
@@ -37,6 +46,49 @@ export const userSlice = createSlice({
         });
         builder.addCase(updateUser.fulfilled, (state, action) => {
             state.user = action.payload;
+        });
+        builder.addCase(searchUsers.fulfilled, (state, action) => {
+            state.foundedUsers = action.payload;
+        });
+
+        builder.addCase(followUser.fulfilled, (state, action) => {
+            const subscribers =
+                state.userProfile.userId !== state.user.userId ?
+                    state.userProfile.subscribers.concat(action.payload)
+                    :
+                    state.userProfile.subscribers;
+
+            const subscriptions = state.userProfile.userId === state.user.userId ?
+                state.userProfile.subscriptions.concat(action.payload)
+                :
+                state.userProfile.subscriptions;
+
+            return {
+                ...state,
+                userProfile: {
+                    ...state.userProfile,
+                    subscribers: subscribers,
+                    subscriptions: subscriptions,
+                    isFollowed: true,
+                },
+            };
+        });
+
+        builder.addCase(unFollowUser.fulfilled, (state, action) => {
+            const subscribers =
+                state.userProfile.subscribers.filter((subscriber) => subscriber.subscriptionId !== action.payload);
+            const subscriptions =
+                state.userProfile.subscriptions.filter((subscribe) => subscribe.subscriptionId !== action.payload);
+
+            return {
+                ...state,
+                userProfile: {
+                    ...state.userProfile,
+                    subscribers: subscribers,
+                    subscriptions: subscriptions,
+                    isFollowed: false,
+                },
+            };
         });
     },
 });
