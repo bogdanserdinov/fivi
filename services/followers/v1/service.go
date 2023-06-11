@@ -77,20 +77,7 @@ func (s *Service) Follow(ctx context.Context, request *followers.FollowRequest) 
 }
 
 func (s *Service) Unfollow(ctx context.Context, request *followers.UnFollowRequest) (*emptypb.Empty, error) {
-	userID, err := jwt.DIDFromCtx(ctx)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
-	}
-
-	followeeID, err := uuid.Parse(request.GetId())
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid id")
-	}
-
-	id, err := s.repo.GetFollower(ctx, repository2.GetFollowerParams{
-		FollowerID: userID,
-		FolloweeID: followeeID.String(),
-	})
+	id, err := uuid.Parse(request.GetId())
 
 	err = s.repo.DeleteFollow(ctx, id)
 
