@@ -235,17 +235,19 @@ func (s *Server) UpdatePost(ctx context.Context, request *pb_posts.UpdatePostReq
 		return nil, errors.Wrap(err, "could not delete post")
 	}
 
-	for i, image := range request.Images {
-		img, err := base64.StdEncoding.DecodeString(image)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "could not decode image")
-		}
+	if len(request.GetImages()) != 0 {
+		for i, image := range request.Images {
+			img, err := base64.StdEncoding.DecodeString(image)
+			if err != nil {
+				return nil, status.Error(codes.InvalidArgument, "could not decode image")
+			}
 
-		name := strconv.Itoa(i) + ".png"
+			name := strconv.Itoa(i) + ".png"
 
-		err = s.CreateImage(ctx, id, name, bytes.NewBuffer(img))
-		if err != nil {
-			return nil, errors.Wrap(err, "could not create image")
+			err = s.CreateImage(ctx, id, name, bytes.NewBuffer(img))
+			if err != nil {
+				return nil, errors.Wrap(err, "could not create image")
+			}
 		}
 	}
 
