@@ -25,8 +25,8 @@ export class PostsService {
     }
 
     /** updates post info */
-    public async update(post: PostUpdateData): Promise<void> {
-        await this.posts.update(post);
+    public async update(post: PostUpdateData): Promise<Post> {
+        return await this.posts.update(post);
     }
 
     /** Gets post in home page */

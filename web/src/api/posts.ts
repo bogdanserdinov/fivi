@@ -187,13 +187,55 @@ export class PostsClient extends APIClient {
     }
 
     /** Updates post */
-    public async update(post: PostUpdateData): Promise<void> {
+    public async update(post: PostUpdateData): Promise<Post> {
         const path = `${this.ROOT_PATH}/v1/posts/post/${post.postId}`;
         const response = await this.http.put(path, JSON.stringify({ text: post.text, images: post.images }));
+
 
         if (!response.ok) {
             await this.handleError(response);
         }
+
+        const postData = await response.json();
+
+        let comments: Comment[] = [];
+
+        postData.post.comments.length > NO_ITEMS_ARRAY &&
+            postData.post.comments.map((comment: any) => {
+
+                comments.push(new Comment(
+                    comment.identifier,
+                    comment.text,
+                    comment.post_id,
+                    comment.username,
+                    comment.user_id,
+                    comment.user_image
+                ))
+            })
+
+        const creator = new Creator(
+            postData.post.creator_profile.id,
+            postData.post.creator_profile.email,
+            postData.post.creator_profile.username,
+            postData.post.creator_profile.numbOfPosts,
+            postData.post.creator_profile.subscribers,
+            postData.post.creator_profile.subscribtions,
+            postData.post.creator_profile.isAvatarExists,
+        );
+
+        return new Post(
+            postData.post.identifier,
+            postData.post.text,
+            postData.post.creator_id,
+            postData.post.creator_username,
+            postData.post.images,
+            postData.post.num_of_images,
+            postData.post.num_of_likes,
+            postData.post.num_of_comments,
+            comments,
+            postData.post.is_liked,
+            creator
+        );
     }
 
     /** Likes/dislikes post */

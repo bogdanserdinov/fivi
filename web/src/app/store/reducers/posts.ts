@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import { createPost, deletePost, getPost, getPostsProfile, likeAndDislikePost, sendComment } from '../actions/posts';
+import { createPost, deletePost, getPost, getPostsProfile, likeAndDislikePost, sendComment, updatePost } from '../actions/posts';
 import { Post } from '@/post';
 
 /** Exposes channels state */
@@ -77,6 +77,33 @@ export const postsSlice = createSlice({
             state.currentPost = action.payload;
         });
 
+        builder.addCase(updatePost.fulfilled, (state, action) => {
+
+            const homePosts = state.homePosts.map((post: Post) => {
+                if (post.postId === action.payload.postId) {
+                    post = action.payload
+                }
+
+                return post;
+            }
+
+            )
+
+            const userProfilePosts = state.userProfilePosts.map((post: Post) => {
+                if (post.postId === action.payload.postId) {
+                    post = action.payload
+                }
+
+                return post;
+            })
+
+            return {
+                ...state,
+                userProfilePosts: userProfilePosts,
+                homePosts: homePosts,
+            };
+        });
+
         builder.addCase(deletePost.fulfilled, (state, action) => {
             const userProfilePosts = state.userProfilePosts.filter((post) => post.postId !== action.payload);
             const homePosts = state.homePosts.filter((post) => post.postId !== action.payload);
@@ -113,18 +140,11 @@ export const postsSlice = createSlice({
             }
 
             );
-            const comments = state.currentPost.comments.concat(action.payload);
-            const numOfComments = state.currentPost.numOfComments = +1;
 
             return {
                 ...state,
                 userProfilePosts: userProfilePosts,
                 homePosts: homePosts,
-                currentPost: {
-                    ...state.currentPost,
-                    comments: comments,
-                    numOfComments: numOfComments,
-                },
             };
         });
 
