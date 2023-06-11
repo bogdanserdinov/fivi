@@ -198,11 +198,10 @@ export class PostsClient extends APIClient {
 
         const postData = await response.json();
 
-        let comments: Comment[] = [];
+        const comments: Comment[] = [];
 
         postData.post.comments.length > NO_ITEMS_ARRAY &&
             postData.post.comments.map((comment: any) => {
-
                 comments.push(new Comment(
                     comment.identifier,
                     comment.text,
@@ -210,8 +209,8 @@ export class PostsClient extends APIClient {
                     comment.username,
                     comment.user_id,
                     comment.user_image
-                ))
-            })
+                ));
+            });
 
         const creator = new Creator(
             postData.post.creator_profile.id,
@@ -265,7 +264,8 @@ export class PostsClient extends APIClient {
             commentData.comment.post_id,
             commentData.comment.username,
             commentData.comment.user_id,
-            commentData.comment.user_image
+            commentData.comment.user_image,
+            commentData.comment.is_avatar_exists
         );
     }
 }

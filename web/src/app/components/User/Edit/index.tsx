@@ -78,10 +78,6 @@ export const UserEdit = () => {
         setEmail(user.email);
     }, [user]);
 
-    useEffect(() => {
-        setAvatar();
-    }, []);
-
     return (
         <div className="user-edit">
             <div className="user-edit__top-side">
@@ -100,7 +96,7 @@ export const UserEdit = () => {
 
             <div className="user-edit__profile">
                 <label htmlFor="user-edit" className="user-edit__file-label">
-                    <Avatar size={AVATAR_SIZE} userId={user.userId} isAvatarExists={user.isAvatarExists} />
+                    <Avatar size={AVATAR_SIZE} urlPhoto={photo} isAvatarExists={true} />
 
                     <p className="user-edit__file-label__text">Змінити фото</p>
                 </label>

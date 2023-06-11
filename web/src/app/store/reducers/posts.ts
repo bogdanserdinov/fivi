@@ -78,24 +78,23 @@ export const postsSlice = createSlice({
         });
 
         builder.addCase(updatePost.fulfilled, (state, action) => {
-
             const homePosts = state.homePosts.map((post: Post) => {
                 if (post.postId === action.payload.postId) {
-                    post = action.payload
+                    post = action.payload;
                 }
 
                 return post;
             }
 
-            )
+            );
 
             const userProfilePosts = state.userProfilePosts.map((post: Post) => {
                 if (post.postId === action.payload.postId) {
-                    post = action.payload
+                    post = action.payload;
                 }
 
                 return post;
-            })
+            });
 
             return {
                 ...state,
