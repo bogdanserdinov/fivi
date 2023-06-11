@@ -4,6 +4,7 @@ import (
 	"context"
 	"fivi/gen/go/followers/v1"
 	profilepb "fivi/gen/go/profile/v1"
+	"fivi/lib/jwt"
 	repository2 "fivi/services/followers/v1/repository"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -29,10 +30,20 @@ func New(repo *repository2.Queries, profiles profilepb.ProfileServiceClient) *Se
 }
 
 func (s *Service) DeleteFollower(ctx context.Context, request *followers.DeleteFollowerRequest) (*emptypb.Empty, error) {
-	id, err := uuid.Parse(request.GetId())
+	userID, err := jwt.DIDFromCtx(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+	}
+
+	followeeID, err := uuid.Parse(request.GetId())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid id")
 	}
+
+	id, err := s.repo.GetFollower(ctx, repository2.GetFollowerParams{
+		FollowerID: followeeID.String(),
+		FolloweeID: userID,
+	})
 
 	err = s.repo.DeleteFollow(ctx, id)
 
@@ -66,10 +77,20 @@ func (s *Service) Follow(ctx context.Context, request *followers.FollowRequest) 
 }
 
 func (s *Service) Unfollow(ctx context.Context, request *followers.UnFollowRequest) (*emptypb.Empty, error) {
-	id, err := uuid.Parse(request.GetId())
+	userID, err := jwt.DIDFromCtx(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "could not retrieve user id")
+	}
+
+	followeeID, err := uuid.Parse(request.GetId())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid id")
 	}
+
+	id, err := s.repo.GetFollower(ctx, repository2.GetFollowerParams{
+		FollowerID: userID,
+		FolloweeID: followeeID.String(),
+	})
 
 	err = s.repo.DeleteFollow(ctx, id)
 
@@ -93,8 +114,8 @@ func (s *Service) ListFollowers(ctx context.Context, request *followers.ListFoll
 		}
 
 		isFollowed, err := s.IsFollowing(ctx, &followers.IsFollowingRequest{
-			UserId:         request.UserId,
-			UserToFollowId: userID.FollowerID,
+			UserId:         userID.FollowerID,
+			UserToFollowId: request.UserId,
 		})
 		if err != nil {
 			return nil, err

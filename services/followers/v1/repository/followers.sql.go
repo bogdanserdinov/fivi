@@ -62,6 +62,22 @@ func (q *Queries) DeleteFollow(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getFollower = `-- name: GetFollower :one
+SELECT id FROM "followers" WHERE "follower_id" = $1 AND "followee_id" = $2
+`
+
+type GetFollowerParams struct {
+	FollowerID string `json:"follower_id"`
+	FolloweeID string `json:"followee_id"`
+}
+
+func (q *Queries) GetFollower(ctx context.Context, arg GetFollowerParams) (uuid.UUID, error) {
+	row := q.queryRow(ctx, q.getFollowerStmt, getFollower, arg.FollowerID, arg.FolloweeID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const isFollowUser = `-- name: IsFollowUser :one
 SELECT EXISTS(
                SELECT id, follower_id, followee_id FROM "followers"

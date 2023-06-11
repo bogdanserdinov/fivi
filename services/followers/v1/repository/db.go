@@ -36,6 +36,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteFollowStmt, err = db.PrepareContext(ctx, deleteFollow); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteFollow: %w", err)
 	}
+	if q.getFollowerStmt, err = db.PrepareContext(ctx, getFollower); err != nil {
+		return nil, fmt.Errorf("error preparing query GetFollower: %w", err)
+	}
 	if q.isFollowUserStmt, err = db.PrepareContext(ctx, isFollowUser); err != nil {
 		return nil, fmt.Errorf("error preparing query IsFollowUser: %w", err)
 	}
@@ -68,6 +71,11 @@ func (q *Queries) Close() error {
 	if q.deleteFollowStmt != nil {
 		if cerr := q.deleteFollowStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteFollowStmt: %w", cerr)
+		}
+	}
+	if q.getFollowerStmt != nil {
+		if cerr := q.getFollowerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getFollowerStmt: %w", cerr)
 		}
 	}
 	if q.isFollowUserStmt != nil {
@@ -128,6 +136,7 @@ type Queries struct {
 	countFollowingsStmt *sql.Stmt
 	createFollowStmt    *sql.Stmt
 	deleteFollowStmt    *sql.Stmt
+	getFollowerStmt     *sql.Stmt
 	isFollowUserStmt    *sql.Stmt
 	listFollowersStmt   *sql.Stmt
 	listFollowingsStmt  *sql.Stmt
@@ -141,6 +150,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		countFollowingsStmt: q.countFollowingsStmt,
 		createFollowStmt:    q.createFollowStmt,
 		deleteFollowStmt:    q.deleteFollowStmt,
+		getFollowerStmt:     q.getFollowerStmt,
 		isFollowUserStmt:    q.isFollowUserStmt,
 		listFollowersStmt:   q.listFollowersStmt,
 		listFollowingsStmt:  q.listFollowingsStmt,
